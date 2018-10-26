@@ -1,0 +1,316 @@
+---
+title: "baRcodeR"
+author: "Yihan Wu and Robert I. Colautti"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Quick Start to Use baRcodeR}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+BaRcodeR is an open-source program to facilitate repeatable label generation and management for labelling, tracking and curating data from biological samples.
+
+Flowchart of major functions
+<img src="https://raw.githubusercontent.com/yihanwu/baRcodeR/master/man/figures/Flowchart.png" alt="drawing" width="650"/>
+
+
+# Cheat Sheet
+
+A 2-page, quick-reference guide is available via [Figshare](https://dx.doi.org/10.6084/m9.figshare.7043309)
+
+# Overview
+
+The baRcodeR package will generate unique IDs with 2-dimensional barcode tags (i.e. QR codes) in a PDF output format that can be printed using a laser printer and sticker sheets. Default spacing is provided for ULINE 1.75" * 0.5" WEATHER RESISTANT LABEL for laser printer; item # S-19297 (uline.ca). Each function can be run interactively with prompts to guide generation of unique identifier codes and barcoded labels, including custom options to modify the PDF to fit any printed format. 
+
+> NOTE: When printing from pdf, ensure that 'anti-aliasing' or 'smoothing' options are turned OFF, and that you are not using 'fit to page' or similar options that will re-scale the output.
+
+Creating unique, scannable 2-D barcodes involves two steps:
+
+  1. Generate unique ID codes with `uniqID_maker()` or `uniqID_hier_maker()`
+  2. Create a PDF file containing unique ID codes coupled with 2D barcode using `create_PDF()`
+
+If you already have ID codes saved in a CSV file, skip step #1 and import directly as a `data.frame()` object for step #2: see [Create barcodes](#create-barcodes).
+
+# Required packages 
+
+'baRcodeR' requires four additional packages and their dependencies. 
+
+```{r eval=F, include=T}
+install.packages(c("ggplot2", "grDevices", "grid", "qrcode"))
+```
+
+
+# Create simple ID codes {#uniqID-maker}
+
+Simple ID codes can be generated using the `uniqID_maker()` function. One-level ID codes consist of two parts, a leading string shared by all samples and a number unique to each sample. 
+
+For example, if we want to generate basic ID codes for 5 individuals:
+
+```
+example005
+example006
+example007
+example008
+example009
+example010
+```
+
+First, load the `baRcodeR` library.
+
+```{r eval=T, include=T}
+
+library(baRcodeR)
+
+```
+
+## By user prompt {#uniqID-maker-user-prompt}
+
+Run the `uniqID_make(r))` function in interactive mode.
+
+```{r eval=F, include=T}
+IDcodes <- uniqID_maker(user = T)
+```
+
+User prompts will appear in the console. Inputs received from the user are passed as parameters to the `uniqID_maker()` to create the object `IDcodes`, which is a `data.frame()` object containing a vector of unique IDs in the first column, and additional columns for strings and individual numbers provided by the user. 
+
+>  \> Please enter string for level: 
+
+The string entered here defines the leading part of the ID code that will be the same for each individual code. This can be the name of a population, a species or a location. In this example, the string entered by the user into the console as denoted by the `>` symbol is "example".
+
+>  \> Please enter string for level: example
+
+The second user prompt is:
+
+>  \> Enter the starting number for level: 
+
+The prompt asks for the starting number to generate unique IDs. These codes do not have to start from 1. 
+
+>  \> Enter the starting number for level: 5
+
+The third user prompt is:
+
+>  \> Enter the ending number for level: 
+
+The prompt asks for the ending number. Unique IDs are generated sequentially from the starting number to the ending number. Note that a higher number can be used as the starting number to generate a reverse order. It is possible to generate IDs that are not sequentially numbered by passing a vector through `uniqID_maker()` (e.g. `seq()`) (see [By arguments](#IDcode-maker-arguments)) 
+
+>  \> Enter the ending number for level: 10
+
+After the starting and ending numbers are set, the function generates a series of numbers. The user is then asked for the number of digits in the unique ID. 
+
+>  \> Number of digits to print for level:
+
+This number must be >= the maximum number of digits in the unique ID code and will add leading zeros as needed. This is particularly useful for generating a smaller number ID codes that are expected to be part of a much larger sample set.
+
+>  \> Number of digits to print for level: 3 
+
+
+## By arguments {#IDcode-maker-arguments}
+
+It is also possible to create unique ID codes directly, without user prompts, by defining parameters in `uniqID_maker`. The interactive example above can be reproduced a single line of code:
+
+```{r eval=T, include=T}
+IDcodes <- uniqID_maker(string = "example", level = 5:10, digits = 3)
+IDcodes
+```
+
+More complicated, non-sequential ID codes can be generated via the `levels` parameter:
+
+```{r eval=T, include=T}
+number_sequence <- seq(1, 10, 2)
+IDcodes <- uniqID_maker(string = "example", level = number_sequence, digits = 3)
+```
+
+The output will then be:
+
+```{r eval=T, include=F}
+IDcodes
+```
+
+ID codes can be saved to a text file for use with other programs (e.g. spreadsheet):
+
+```{r eval=F, include=T}
+write.csv(IDcodes, "IDcodes.csv")
+```
+
+
+# Create hierarchical ID codes {#uniqID_hier_maker}
+
+`uniqID_hier_maker` is used to make unique ID codes that follow a hierarchical (i.e. nested) structure, for example we might sample B individuals from A populations at each of C time points. Similar to `uniqID_maker`, this function can be run interactively or by directly defining parameters. In contrast to `uniqID_maker`, `uniqID_hier_maker` is used to generate nested pairs of strings and unique ID codes. Below is an example of a list of hierarchical identifier codes with three levels (a, b, c) and varying numbers of individuals for each level (a=3, b=2, c=2). 
+
+```
+a1-b1-c1
+a1-b1-c2
+a1-b2-c1
+a1-b2-c2
+a2-b1-c1
+a2-b1-c2
+a2-b2-c1
+a2-b2-c2
+a3-b1-c1
+a3-b1-c2
+a3-b2-c1
+a3-b2-c2
+```
+
+
+
+## By user prompts {#uniqID-hier-maker-user-prompt}
+
+To create hierarchical ID codes in interactive mode, start with the argument `user=T` in the function.
+
+```{r eval=F, include=T}
+IDcodes <- uniqID_hier_maker(user = T)
+```
+
+The first prompt that appears in the console is:
+
+>  \> What is the # of levels in hierarchy: 
+
+In this example, we have levels a, b, and c; so three levels in total. 
+
+>  \> What is the # of levels in hierarchy: 3
+
+The second prompt asks if a string should be appended to the end of the IDs. 
+
+>  \> String at end of barcode? (y/n):
+
+There are only two possible responses to this question as indiciated in the parenthesis. If the answer is yes, then a new prompt will appear.
+
+>  \> Please enter ending string: 
+
+In this example, there is no ending string.
+
+>  \> String at end of barcode? (y/n): n
+
+A series of prompts will repeat for each level, allowing the user to set the leading string, the starting number, and the ending number. These are similar to `uniqID_maker`(see [uniqID_maker](#uniqID-maker-user-prompt) for step by step instructions). The number of digits to print can also vary for each level. 
+
+## By argument
+
+Instead of interactive mode, it is possible to define arguments directly into `uniqID_hier_maker`. Unlike `uniqID_maker`, a `list` object is required to specify the parameters in each level of the hierarchy. First, define a vector for each level with three parameters: the leading string, the start value, and the end value. Second, combine vectors into a `list` object in the order of their hierarchy. For the example below, 'c' is nested within 'b' within 'a'. 
+
+```{r}
+level_one <- c("a", 1, 3)
+level_two <- c("b", 1, 2)
+level_three <- c("c", 10, 12)
+hier_list <- list(level_one, level_two, level_three)
+```
+
+You can specify a custom suffix string for all ID codes using the `end` argument, and the number of digits to print for all levels through the `digits` argument. It is not possible at this time to vary the number of digits printed for each level, however this can be done using interactive mode (i.e. user=T).
+
+The list can then be passed into `uniqID_hier_maker` to generate the uniqeID codes.
+
+```{r, eval=T, include=T}
+IDcodes <- uniqID_hier_maker(hierarchy = hier_list, digits = 1)
+```
+
+The output will be:
+
+```{r eval=T, include=T}
+IDcodes
+```
+
+The data frame contains ID codes in the first column, and a separate column for each level of the hierarchy, with the user-defined string as the header; as shown under 'Preview'. This can be saved to a CSV:
+
+```{r eval=F, include=T}
+write.csv(IDcodes, "IDcodes.csv")
+```
+
+This file is useful for archiving ID codes and as a starting point for data entry. For example, it can be opened in a spreadsheet program to add data measurement columns. It is also the input for creating printable, QR-coded labels with `create_PDF`.
+
+# Create barcodes {#create-barcodes}
+
+2D barcodes (i.e. QR codes) paired with ID code strings are created from an input vector of text labels. Users can manually create their own ID codes as a vector, as the first column of an existing `data.frame()` object, or as a `data.frame()` from `<-uniqID_maker` or `<-uniqID_hier_maker`. 
+
+The function `create_PDF()` produces a pdf file containing barcodes that fit to the dimensions of ULINE 1.75" * 0.5" WEATHER RESISTANT LABEL for laser printer; item # S-19297 (uline.ca). If needed, the page setup can be modified using advanced options in [custom_create_PDF](#custom-create-pdf). 
+
+The first step is to read in the vector of ID codes, in this example from a CSV file: 
+
+```{r eval=F, include=T}
+# Reading in from a csv file
+IDcodes<-read.csv("IDcodes.csv")
+```
+
+## By user prompt {#create-barcodes-user-prompt}
+
+In the following example, the IDcodes data.frame object is used to create a PDF file called "example.pdf", with a font size of 3.5, and an error correction level "Q" meaning the barcode can tolerate up to 25% damage. The parameter `user=T` will prompt the user to guide creation of the pdf file containing scannable barcodes.
+
+If `IDcodes` is a vector, the vector will be directly used to generate barcodes. If `IDcodes` is a data frame, the function will use the column called `label` or else the first column in the data frame. 
+
+```{r eval=F, include=T}
+create_PDF(user=T, Labels=IDcodes)
+```
+A user prompt is printed into the console. For example:
+
+>  \> Please enter name for PDF output file: 
+
+Any combination of letters and numbers can be used for the name of the pdf file. Here, the file name is set to "example."
+
+>  \> Please enter name for PDF output file: example
+
+The next user prompt is to set the size of the text printed on each barcode. 
+
+>  \> Please enter a font size (2.2-4.7): 
+
+This user input has to be a number between 2.2 and 4.7. In this example, the font size will be 3.5.
+
+>  \> Please enter a font size (2.2-4.7): 3.5
+
+It is possble that the labels are too long, or cannot fit on one row due to the size of the font selected. This will cause an error to print to console.
+
+> ERROR: not enought space to print full label, please decrease font size.
+
+The font size user prompt will appear again to reset to a more appropriate font size.  
+
+>  \> Please enter a font size (2.2-4.7):
+
+The last basic parameter to set is the error correction level. There are four possible levels: L, M, Q, and H. 
+
+Level "L" - up to 7% damage -- ideal for very small labels (large pixels)
+Level "M" - up to 15% damage
+Level "Q" - up to 25% damage
+Level "H" - up to 30% damage -- good for bigger labels (small pixels)
+
+The user prompt for error correction level is similar to previous prompts.
+
+>  \> Specify an error correction - L, M, Q, H: 
+
+This example uses an error correction level "Q"
+
+>  \> Specify an error correction - L, M, Q, H: Q
+
+The last user prompt asks whether the user wants to modify the advanced parameters. 
+
+>  \> Edit advanced parameters? (Y/N): 
+
+In this example, no advanced parameters are modified. Using advanced parameters are covered in [advanced options](#custom-create-pdf)
+
+>  \> Edit advanced parameters? (Y/N): N
+
+## By arguments
+
+The same example above can be reproduced directly with the following parameters:
+
+```{r eval=F, include=T}
+create_PDF(Labels = IDcodes, name = "example", ErrCorr = "Q", Fsz = 2.5)
+```
+
+
+# Advanced Options for pdf output {#custom-create-pdf}
+
+There are advanced options for the pdf output which can be accessed interactively or by specifying additional arguments in `create_PDF`. The user prompts are similar to the ones shown above but allow customization of the output document for other printing formats. Documentation of the advanced options can be found using through the man page `?custom_create_PDF`.
+
+Arguments can be passed from `create_PDF` to `custom_create_PDF` as `create_PDF` is just a wrapper for `custom_create_PDF`. 
+
+```{r eval=F, include=T}
+
+## This will create a pdf sheet where the labels are printed in columns then rows. It will skip 3 rows from the top and 1 column from the left. 
+create_PDF(Labels = Labels, name = "example_advanced", ErrCorr = "Q", Fsz = 2.5, Across = F, ERows = 3, ECol = 1)
+```
+
+
+
+
+

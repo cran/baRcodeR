@@ -1,0 +1,4 @@
+Name: baRcodeR GUI
+Description: Generate unique ID codes with printable 2D barcodes.
+Binding: make_labels
+Interactive: true
