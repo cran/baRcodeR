@@ -258,14 +258,6 @@ This user input has to be a number between 2.2 and 4.7. In this example, the fon
 
 >  \> Please enter a font size (2.2-4.7): 3.5
 
-It is possble that the labels are too long, or cannot fit on one row due to the size of the font selected. This will cause an error to print to console.
-
-> ERROR: not enought space to print full label, please decrease font size.
-
-The font size user prompt will appear again to reset to a more appropriate font size.  
-
->  \> Please enter a font size (2.2-4.7):
-
 The last basic parameter to set is the error correction level. There are four possible levels: L, M, Q, and H. 
 
 Level "L" - up to 7% damage -- ideal for very small labels (large pixels)

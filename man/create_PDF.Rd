@@ -18,9 +18,8 @@ parameter values) Default is \code{FALSE}}
 \item{ErrCorr}{error correction value. Level of damage from low to high:
 \code{"L"}, \code{"M"}, \code{"Q"}, \code{"H"}. Default is \code{"H"}}
 
-\item{Fsz}{numerical. Sets font size using a number between \code{2.2} and
- \code{4.7}. Longer ID codes may not fit on the labels using larger font sizes. 
-Default font size is \code{2.5}}
+\item{Fsz}{numerical. Sets font size in points. Longer ID codes may be shrunk to fit if trunaction is not used. 
+Default font size is \code{5}}
 
 \item{...}{advanced arguments to modify the PDF layout. See
 \code{\link{custom_create_PDF}} for arguments. The advanced options can be

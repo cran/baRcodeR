@@ -12,7 +12,7 @@
 
 <meta name="author" content="Yihan Wu and Robert I. Colautti" />
 
-<meta name="date" content="2018-10-17" />
+<meta name="date" content="2018-11-29" />
 
 <title>baRcodeR</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">baRcodeR</h1>
 <h4 class="author"><em>Yihan Wu and Robert I. Colautti</em></h4>
-<h4 class="date"><em>2018-10-17</em></h4>
+<h4 class="date"><em>2018-11-29</em></h4>
 
 
 
@@ -274,14 +274,6 @@ IDcodes&lt;-<span class="kw">read.csv</span>(<span class="st">&quot;IDcodes.csv&
 <p>This user input has to be a number between 2.2 and 4.7. In this example, the font size will be 3.5.</p>
 <blockquote>
 <p>&gt; Please enter a font size (2.2-4.7): 3.5</p>
-</blockquote>
-<p>It is possble that the labels are too long, or cannot fit on one row due to the size of the font selected. This will cause an error to print to console.</p>
-<blockquote>
-<p>ERROR: not enought space to print full label, please decrease font size.</p>
-</blockquote>
-<p>The font size user prompt will appear again to reset to a more appropriate font size.</p>
-<blockquote>
-<p>&gt; Please enter a font size (2.2-4.7):</p>
 </blockquote>
 <p>The last basic parameter to set is the error correction level. There are four possible levels: L, M, Q, and H.</p>
 <p>Level “L” - up to 7% damage – ideal for very small labels (large pixels) Level “M” - up to 15% damage Level “Q” - up to 25% damage Level “H” - up to 30% damage – good for bigger labels (small pixels)</p>
