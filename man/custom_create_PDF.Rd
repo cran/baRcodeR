@@ -3,52 +3,68 @@
 \name{custom_create_PDF}
 \alias{custom_create_PDF}
 \alias{qrcode_make}
-\title{Make QR codes and print labels}
+\alias{code_128_make}
+\title{Make barcodes and print labels}
 \usage{
 custom_create_PDF(user = FALSE, Labels = NULL, name = "LabelsOut",
-  ErrCorr = "H", Fsz = 5, Across = TRUE, ERows = 0, ECols = 0,
-  trunc = TRUE, numrow = 20, numcol = 4, page_width = 8.5,
-  page_height = 11, width_margin = 0.25, height_margin = 0.5,
-  label_width = NA, label_height = NA, x_space = 0, y_space = 0.5)
+  type = "matrix", ErrCorr = "H", Fsz = 5, Across = TRUE,
+  ERows = 0, ECols = 0, trunc = TRUE, numrow = 20, numcol = 4,
+  page_width = 8.5, page_height = 11, width_margin = 0.25,
+  height_margin = 0.5, label_width = NA, label_height = NA,
+  x_space = 0, y_space = 0.5)
 
 qrcode_make(Labels, ErrCorr)
+
+code_128_make(Labels)
 }
 \arguments{
 \item{user}{logical. Run function using interactive mode (prompts user for
 parameter values) Default is \code{FALSE}}
 
-\item{Labels}{vector or data frame object containing label names (i.e. unique ID codes).}
+\item{Labels}{vector or data frame object containing label names (i.e. unique
+ID codes) with either UTF-8 or ASCII encoding.}
 
-\item{name}{character. Name of the PDF output file. Default is \code{"LabelsOut"}.}
+\item{name}{character. Name of the PDF output file. Default is
+\code{"LabelsOut"}.}
 
-\item{ErrCorr}{error correction value. Level of damage from low to high:
-\code{"L"}, \code{"M"}, \code{"Q"}, \code{"H"}. Default is \code{"H"}}
+\item{type}{character. Choice of \code{"linear"} code 128 or \code{"matrix"}
+QR code labels. Default is \code{"matrix"}.}
 
-\item{Fsz}{numerical. Sets font size in points. Longer ID codes may be shrunk to fit if trunaction is not used. 
-Default font size is \code{5}}
+\item{ErrCorr}{error correction value for matrix labels only. Level of damage
+from low to high: \code{"L"}, \code{"M"}, \code{"Q"}, \code{"H"}. Default
+is \code{"H"}.}
 
-\item{Across}{logical. When \code{TRUE}, print labels across rows, left to right.
-When \code{FALSE}, print labels down columns, top to bottom. Default is \code{TRUE}.}
+\item{Fsz}{numerical. Sets font size in points. Longer ID codes may be shrunk
+to fit if truncation is not used for matrix labels. Default font size is
+\code{5}. ID codes are also shrunk automatically to fit on the label if
+actual size is bigger than label dimensions.}
 
-\item{ERows}{number of rows to skip. Default is \code{0}. Example:
-setting ERows to 6 will begin printing at row 7.
-ERows and ECols are useful for printing on partially-used label sheets.}
+\item{Across}{logical. When \code{TRUE}, print labels across rows, left to
+right. When \code{FALSE}, print labels down columns, top to bottom. Default
+is \code{TRUE}.}
 
-\item{ECols}{number of columns to skip. Default is \code{0}. Example:
-setting ECols to 2 will put the first label at column 3.
-ERows and ECols are useful for printing on partially-used label sheets.}
+\item{ERows}{number of rows to skip. Default is \code{0}. Example: setting
+ERows to 6 will begin printing at row 7. ERows and ECols are useful for
+printing on partially-used label sheets.}
+
+\item{ECols}{number of columns to skip. Default is \code{0}. Example: setting
+ECols to 2 will put the first label at column 3. ERows and ECols are useful
+for printing on partially-used label sheets.}
 
 \item{trunc}{logical. Text is broken into multiple lines for longer ID codes,
-to prevent printing off of the label area. Default is \code{TRUE}. If \code{trunc = F}, 
-and text is larger than the physical label, the text will be shrunk down automatically.}
+to prevent printing off of the label area. Default is \code{TRUE}. If
+\code{trunc = F}, and text is larger than the physical label, the text will
+be shrunk down automatically.}
 
 \item{numrow}{numerical. Number of rows per page. Default is \code{20}.}
 
 \item{numcol}{numerical. Number of columns per page. Default is \code{4}.}
 
-\item{page_width}{numerical. Width of page (in inches). Default is set to \code{8.5}.}
+\item{page_width}{numerical. Width of page (in inches). Default is set to
+\code{8.5}.}
 
-\item{page_height}{numerical. Height of page (in inches). Default is set to \code{11}.}
+\item{page_height}{numerical. Height of page (in inches). Default is set to
+\code{11}.}
 
 \item{width_margin}{numerical. The width margin of the page (in inches).
 Default is \code{0.25}.}
@@ -56,29 +72,36 @@ Default is \code{0.25}.}
 \item{height_margin}{numerical. The height margin of the page (in inches).
 Default is \code{0.5}.}
 
-\item{label_width}{numerical. The width of label (in inches). Will be calculated as
-\code{(page_width - 2 * width_margin)/numcol} if \code{label_width} is set as \code{NULL}.}
+\item{label_width}{numerical. The width of label (in inches). Will be
+calculated as \code{(page_width - 2 * width_margin)/numcol} if
+\code{label_width} is set as \code{NULL}.}
 
-\item{label_height}{numerical. The height of the label (in inches). Will be calculated as
-\code{(page_height - 2 * height_margin)/numrow} if \code{label_height} is set as \code{NULL}.}
+\item{label_height}{numerical. The height of the label (in inches). Will be
+calculated as \code{(page_height - 2 * height_margin)/numrow} if
+\code{label_height} is set as \code{NULL}.}
 
-\item{x_space}{numerical. A value between \code{0} and \code{1}. This
-sets the distance between the QR code and text of each label. Default is \code{0}.}
+\item{x_space}{numerical. A value between \code{0} and \code{1}. This sets
+the distance between the QR code and text of each label. Only applies when
+\code{type = "matrix"}. Default is \code{0}.}
 
-\item{y_space}{numerical. The height position of the text on the physical label as a 
-proportion of the label height. A value between \code{0} and \code{1}.}
+\item{y_space}{numerical. The height position of the text on the physical
+label as a proportion of the label height. Only applies when \code{type =
+"matrix"}. A value between \code{0} and \code{1}. Default is \code{0.5}.}
 }
 \value{
-a PDF file containing QR-coded labels, saved to the default directory.
+a PDF file containing QR-coded labels, saved to the default
+  directory.
 }
 \description{
-Input a vector or data frame of ID codes to produce a PDF of QR-coded labels 
-that can then be printed. The PDF setup is for the ULINE 1.75" * 0.5"
-WEATHER RESISTANT LABEL for laser printer; item # S-19297 (uline.ca)
+Input a vector or data frame of ID codes to produce a PDF of barcode labels
+that can then be printed. The PDF setup is for the ULINE 1.75" * 0.5" WEATHER
+RESISTANT LABEL for laser printer; item # S-19297 (uline.ca)
 }
 \details{
-\code{barcode_make} is the helper function generating the actual QR code and
-creating the page layout for printed labels.
+\code{qrcode_make} is the helper function for generating a QR code matrix.
+\code{code_128_make} is the helper function for generating a linear barcode
+according to code 128 set B. \code{custom_create_PDF} is the main function
+which sets page layout, and creates the PDF file.
 }
 \seealso{
 \code{\link{create_PDF}}

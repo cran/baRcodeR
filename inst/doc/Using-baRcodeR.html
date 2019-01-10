@@ -12,7 +12,7 @@
 
 <meta name="author" content="Yihan Wu and Robert I. Colautti" />
 
-<meta name="date" content="2018-11-29" />
+<meta name="date" content="2019-01-10" />
 
 <title>baRcodeR</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">baRcodeR</h1>
 <h4 class="author"><em>Yihan Wu and Robert I. Colautti</em></h4>
-<h4 class="date"><em>2018-11-29</em></h4>
+<h4 class="date"><em>2019-01-10</em></h4>
 
 
 
@@ -199,7 +199,7 @@ a3-b2-c2</code></pre>
 <blockquote>
 <p>&gt; String at end of barcode? (y/n):</p>
 </blockquote>
-<p>There are only two possible responses to this question as indiciated in the parenthesis. If the answer is yes, then a new prompt will appear.</p>
+<p>There are only two possible responses to this question as indicated in the parenthesis. If the answer is yes, then a new prompt will appear.</p>
 <blockquote>
 <p>&gt; Please enter ending string:</p>
 </blockquote>
@@ -217,7 +217,7 @@ level_two &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="s
 level_three &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;c&quot;</span>, <span class="dv">10</span>, <span class="dv">12</span>)
 hier_list &lt;-<span class="st"> </span><span class="kw">list</span>(level_one, level_two, level_three)</code></pre></div>
 <p>You can specify a custom suffix string for all ID codes using the <code>end</code> argument, and the number of digits to print for all levels through the <code>digits</code> argument. It is not possible at this time to vary the number of digits printed for each level, however this can be done using interactive mode (i.e. user=T).</p>
-<p>The list can then be passed into <code>uniqID_hier_maker</code> to generate the uniqeID codes.</p>
+<p>The list can then be passed into <code>uniqID_hier_maker</code> to generate the unique ID codes.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">IDcodes &lt;-<span class="st"> </span><span class="kw">uniqID_hier_maker</span>(<span class="dt">hierarchy =</span> hier_list, <span class="dt">digits =</span> <span class="dv">1</span>)</code></pre></div>
 <pre><code>## Warning in uniqID_hier_maker(hierarchy = hier_list, digits = 1): Digits
 ## specified less than max level number. Increasing number of digits for level</code></pre>

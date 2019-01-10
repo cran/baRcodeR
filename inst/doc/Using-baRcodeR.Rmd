@@ -177,7 +177,7 @@ The second prompt asks if a string should be appended to the end of the IDs.
 
 >  \> String at end of barcode? (y/n):
 
-There are only two possible responses to this question as indiciated in the parenthesis. If the answer is yes, then a new prompt will appear.
+There are only two possible responses to this question as indicated in the parenthesis. If the answer is yes, then a new prompt will appear.
 
 >  \> Please enter ending string: 
 
@@ -200,7 +200,7 @@ hier_list <- list(level_one, level_two, level_three)
 
 You can specify a custom suffix string for all ID codes using the `end` argument, and the number of digits to print for all levels through the `digits` argument. It is not possible at this time to vary the number of digits printed for each level, however this can be done using interactive mode (i.e. user=T).
 
-The list can then be passed into `uniqID_hier_maker` to generate the uniqeID codes.
+The list can then be passed into `uniqID_hier_maker` to generate the unique ID codes.
 
 ```{r, eval=T, include=T}
 IDcodes <- uniqID_hier_maker(hierarchy = hier_list, digits = 1)

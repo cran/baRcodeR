@@ -82,6 +82,7 @@ make_labels<-function() {
                      shiny::tags$h3("2. (Optional) Modify PDF from default values"),
                      shiny::textInput("filename", "PDF file name", value = "LabelsOut"),
                      shiny::selectInput(inputId = "err_corr", label = "Error Correction", choices = c("L (up to 7% damage)"="L", "M (up to 15% damage)"= "M", "Q (up to 25% damage)" = "Q", "H (up to 30% damage)" = "H"), multiple=FALSE),
+                     shiny::selectInput("type", "Barcode Type", choices = list("Matrix (2D)" = "matrix", "Linear (1D)" = "linear"), multiple = F),
                      shiny::numericInput("font_size", "Font Size", value = 2.5, min = 2.2, max = 4.7),
                      shiny::radioButtons("across", "Print across?", choices = c(Yes = TRUE, No = FALSE), selected = TRUE),
                      shiny::numericInput("erow", "# of rows to skip", value = 0, min = 0, max = 20, width=NULL),
@@ -150,23 +151,30 @@ make_labels<-function() {
     # check label file
     Labels_pdf<-shiny::eventReactive(input$label_check, {
       shiny::req(input$labels)
-      Labels<-utils::read.csv(input$labels$datapath, header=input$header)
+      Labels<-utils::read.csv(input$labels$datapath, header=input$header, stringsAsFactors = F)
       Labels
     })
     # preview label file
     output$check_make_labels<-DT::renderDataTable(Labels_pdf(), server = FALSE, selection = list(mode = "single", target = "column", selected = 1))
     output$label_preview <- shiny::renderImage({
-      qr_vp <- grid::viewport(x=grid::unit(0.05, "npc"), y=grid::unit(0.8, "npc"), width = grid::unit(0.3 * (input$page_width - 2 * input$width_margin)/input$numcol, "in"), height = grid::unit(0.6 * (input$page_height - 2 * input$height_margin)/input$numrow, "in"), just=c("left", "top"))
-      label_vp <- grid::viewport(x=grid::unit((0.4 + 0.6 * input$x_space)* (input$page_width - 2 * input$width_margin)/input$numcol, "in"), y=grid::unit(input$y_space, "npc"), width = grid::unit(0.4, "npc"), height = grid::unit(0.8, "npc"), just=c("left", "center"))
+      if(input$type == "matrix") {
+        code_vp <- grid::viewport(x=grid::unit(0.05, "npc"), y=grid::unit(0.8, "npc"), width = grid::unit(0.3 * (input$page_width - 2 * input$width_margin)/input$numcol, "in"), height = grid::unit(0.6 * (input$page_height - 2 * input$height_margin)/input$numrow, "in"), just=c("left", "top"))
+        label_vp <- grid::viewport(x=grid::unit((0.4 + 0.6 * input$x_space)* (input$page_width - 2 * input$width_margin)/input$numcol, "in"), y=grid::unit(input$y_space, "npc"), width = grid::unit(0.4, "npc"), height = grid::unit(0.8, "npc"), just=c("left", "center"))
+        label_plot <- qrcode_make(Labels = Labels_pdf()[1, input$check_make_labels_columns_selected], ErrCorr = input$err_corr)
+      } else {
+        code_vp <- grid::viewport(x=grid::unit(0.05, "npc"), y=grid::unit(0.8, "npc"), width = grid::unit(0.9 * (input$page_width - 2 * input$width_margin)/input$numcol, "in"), height = grid::unit(0.8 * (input$page_height - 2 * input$height_margin)/input$numrow, "in"), just=c("left", "top"))
+        # text_height <- ifelse(input$Fsz / 72 > (input$page_height - 2 * input$height_margin)/input$numrow * 0.3, (input$page_height - 2 * input$height_margin)/input$numrow * 0.3, input$Fsz/72)
+        label_vp <- grid::viewport(x=grid::unit(0.5, "npc"), y = grid::unit(1, "npc"), width = grid::unit(1, "npc"), height = grid::unit((input$page_height - 2 * input$height_margin)/input$numrow * 0.3, "in"), just = c("centre", "top"))
+        label_plot <- code_128_make(Labels = Labels_pdf()[1, input$check_make_labels_columns_selected])
+      }
       outputfile <- tempfile(fileext=".png")
-      label_plot <- baRcodeR::qrcode_make(Labels = Labels_pdf()[1, input$check_make_labels_columns_selected], ErrCorr = input$err_corr)
       grDevices::png(outputfile, width = (input$page_width - 2 * input$width_margin)/input$numcol, (input$page_height - 2 * input$height_margin)/input$numrow, units = "in", res=100)
       # grid::grid.rect()
-      grid::pushViewport(qr_vp)
+      grid::pushViewport(code_vp)
       grid::grid.draw(label_plot)
       grid::popViewport()
       grid::pushViewport(label_vp)
-      grid::grid.text(label = Labels_pdf()[1, input$check_make_labels_columns_selected], gp = grid::gpar(fontsize = 2 * input$font_size, lineheight = 0.8))
+      grid::grid.text(label = Labels_pdf()[1, input$check_make_labels_columns_selected], gp = grid::gpar(fontsize = input$font_size, lineheight = 0.8))
       grDevices::dev.off()
       list(src = outputfile,
            width = 80 * (input$page_width - 2 * input$width_margin)/input$numcol, 
@@ -176,14 +184,14 @@ make_labels<-function() {
     )
     # text indicator that pdf finished making
     PDF_done<-shiny::eventReactive(input$make_pdf, {
-      baRcodeR::custom_create_PDF(user=FALSE, Labels = Labels_pdf()[, input$check_make_labels_columns_selected], name = input$filename, ErrCorr = input$err_corr, Fsz = input$font_size, Across = input$across, ERows = input$erow, ECols = input$ecol, trunc = input$trunc, numrow = input$numrow, numcol = input$numcol, page_width = input$page_width, page_height = input$ page_height, height_margin = input$height_margin, width_margin = input$width_margin, label_width = input$label_width, label_height = input$label_height, x_space = input$x_space, y_space = input$y_space)
+      baRcodeR::custom_create_PDF(user=FALSE, Labels = Labels_pdf()[, input$check_make_labels_columns_selected], name = input$filename, type = input$type, ErrCorr = input$err_corr, Fsz = input$font_size, Across = input$across, ERows = input$erow, ECols = input$ecol, trunc = input$trunc, numrow = input$numrow, numcol = input$numcol, page_width = input$page_width, page_height = input$ page_height, height_margin = input$height_margin, width_margin = input$width_margin, label_width = input$label_width, label_height = input$label_height, x_space = input$x_space, y_space = input$y_space)
       status<-"Done"
       status
     })
     PDF_code_snippet<-shiny::reactive({
-      noquote(paste0("custom_create_PDF(user=FALSE, Labels = label_csv[,", input$check_make_labels_columns_selected, "], name = \'", input$filename, "\', ErrCorr = \'", input$err_corr, "\', Fsz = ", input$font_size, ", Across = ", input$across, ", ERows = ", input$erow, ", ECols = ", input$ecol, ", trunc = ", input$trunc, ", numrow = ", input$numrow, ", numcol = ", input$numcol, ", page_width = ", input$page_width, ", page_height = ", input$page_height, ", width_margin = ", input$width_margin, ", height_margin = ", input$height_margin, ", label_width = ", input$label_width, ", label_height = ", input$label_height,", x_space = ", input$x_space, ", y_space = ", input$y_space, ")"))
+      noquote(paste0("custom_create_PDF(user=FALSE, Labels = label_csv[,", input$check_make_labels_columns_selected, "], name = \'", input$filename, "\' type = \'", input$type, "\', ErrCorr = \'", input$err_corr, "\', Fsz = ", input$font_size, ", Across = ", input$across, ", ERows = ", input$erow, ", ECols = ", input$ecol, ", trunc = ", input$trunc, ", numrow = ", input$numrow, ", numcol = ", input$numcol, ", page_width = ", input$page_width, ", page_height = ", input$page_height, ", width_margin = ", input$width_margin, ", height_margin = ", input$height_margin, ", label_width = ", input$label_width, ", label_height = ", input$label_height,", x_space = ", input$x_space, ", y_space = ", input$y_space, ")"))
       })
-    csv_code_snippet<-shiny::reactive({noquote(paste0("label_csv <- read.csv( \'", input$labels$name, "\', header = ", input$header, ")"))})
+    csv_code_snippet<-shiny::reactive({noquote(paste0("label_csv <- read.csv( \'", input$labels$name, "\', header = ", input$header, ", stringsAsFactors = F)"))})
     output$PDF_code_render<-shiny::renderText({
       paste(csv_code_snippet(), PDF_code_snippet(), sep = "\n")
       })

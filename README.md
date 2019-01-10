@@ -31,14 +31,14 @@ library(baRcodeR)
 
 ## Introduction
 
-`baRcodeR` is a R package for generating unique indentifier strings and pintable 2D (QR) barcodes, with the aim of improving repeatability of labelling, tracking and curating data from biological samples. Specifically, users can:
+`baRcodeR` is a R package for generating unique indentifier strings and printable 2D (QR) barcodes, with the aim of improving repeatability of labelling, tracking and curating data from biological samples. Specifically, users can:
 
 * generate simple ID codes (Ex001, Ex002, Ex003 ...),
 * generate hierarchical (i.e. nested) ID codes (A01-B01, A01-B02, A02-B01, A02-B02, A03-B01 ...),
 * generate printable PDF files of paired ID codes and QR barcodes with default spacing for ULINE 1.75" * 0.5" WEATHER RESISTANT LABEL for laser printer; item # S-19297 (uline.ca)
 * customize the PDF layout for any type of printable format (e.g, vinyl stickers, waterproof paper)
 * generate reproducible code for archival purposes (e.g. in publications or online repositories)
-* create CSV files to link uniqeIDs and sampling hierarchy with downstream data collection workflows
+* create CSV files to link unique IDs and sampling hierarchy with downstream data collection workflows
 
 ## Using the RStudio addin 
 
@@ -54,7 +54,7 @@ The first tab generates basic ID codes:
 
 ![Active simple ID code tab](man/figures/tab-1-screenshot-2.png)
 
-As you fill in the fields, a preview of the ID codes will appear on the righthand side along with reproducible code, which can be copied for archival purposes. Clicking 'Create Label.csv' will create a CSV file called 'Label_YYYY-MM-DD.csv', which contains a data frame with the full unique ID strings as the first column, the user-defined prefix string in the second column, and the unique ID number in the third column. This file is useful for archiving ID codes and as a starting point for data entry. For example, it can be opened in a spreadsheet program to add data measurement columns. It is also the input for creating printable, QR-coded labels with `create_PDF`.
+As you fill in the fields, a preview of the ID codes will appear on the right-hand side along with reproducible code, which can be copied for archival purposes. Clicking 'Create Label.csv' will create a CSV file called 'Label_YYYY-MM-DD.csv', which contains a data frame with the full unique ID strings as the first column, the user-defined prefix string in the second column, and the unique ID number in the third column. This file is useful for archiving ID codes and as a starting point for data entry. For example, it can be opened in a spreadsheet program to add data measurement columns. It is also the input for creating printable, QR-coded labels with `create_PDF`.
 
 ![Screenshot of the hierarchical ID code tab](man/figures/tab-2-screenshot.png)
 
@@ -68,7 +68,7 @@ The Barcode Creation tab contains all the advanced options for page layout. The 
 
 ![Screenshot of Column Selection](man/figures/tab-3-screenshot-2.png)
 
-After importing a CSV flie, the preview shows part of the expected output PDF file based on font size and other layout options. The first column is highlighted by default and defines the column to use for the labels. Clicking on a different column will set it as the ID code column, as shown in the preview.  
+After importing a CSV file, the preview shows part of the expected output PDF file based on font size and other layout options. The first column is highlighted by default and defines the column to use for the labels. Clicking on a different column will set it as the ID code column, as shown in the preview.  
 
 Clicking "Make PDF" will generate a printable PDF of all barcodes provided. This can take several minutes for >100 barcodes, depending on computer speed. The text "Done" will appear upon completion of the PDF file.
 

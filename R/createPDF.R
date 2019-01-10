@@ -1,4 +1,4 @@
-#' Make QR codes and print labels
+#' Make barcodes and print labels
 #'
 #' Input vector or data.frame of ID codes to produce a PDF of QR codes which can 
 #' be printed. This is a wrapper function for \code{\link{custom_create_PDF}}
@@ -47,15 +47,23 @@
 #' ## specify column from data frame
 #' create_PDF(user = FALSE, Labels = example_df[,2], name = file.path(tempdir(), "example_3"))
 #' }
+#' \donttest{
+#' ## create linear (code128) label rather than matrix (2D/QR) labels
+#' example_df <- data.frame(c("a1", "a2"), c("a1-b1", "a1-b2"), c("b1", "b1"))
+#' ## specify column from data frame
+#' create_PDF(user = FALSE, Labels = example_df, name = file.path(tempdir(),
+#' "example_4", type = "linear"))
+#' }
 #' @seealso \code{\link{custom_create_PDF}}
 
 
 create_PDF <- function(user = FALSE,
                      Labels = NULL,
                      name ="LabelsOut",
+                     type = "matrix",
                      ErrCorr = "H",
                      Fsz = 2.5, ...) {
-  custom_create_PDF(user, Labels, name, ErrCorr, Fsz, ...)
+  custom_create_PDF(user, Labels, name, type, ErrCorr, Fsz, ...)
 }
 
 

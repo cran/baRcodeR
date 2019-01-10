@@ -1,6 +1,6 @@
 Package: baRcodeR
 Title: Labelling, Tracking, and Collecting Data from Biological Samples
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: c(person("Yihan", "Wu", role="aut", email = "yihan.wu@queensu.ca"), person("Robert", "Colautti", email = "robert.colautti@queensu.ca", role = c("aut", "cre")))
 Maintainer: Robert Colautti <robert.colautti@queensu.ca>
 Description: Tools to generate unique identifiers and printable barcoded labels for sample management. 
@@ -19,8 +19,8 @@ VignetteBuilder: knitr
 URL: https://github.com/yihanwu/baRcodeR
 BugReports: https://github.com/yihanwu/baRcodeR/issues
 NeedsCompilation: no
-Packaged: 2018-11-29 21:02:49 UTC; colauttilab
+Packaged: 2019-01-10 19:47:07 UTC; colauttilab
 Author: Yihan Wu [aut],
   Robert Colautti [aut, cre]
 Repository: CRAN
-Date/Publication: 2018-11-29 21:20:03 UTC
+Date/Publication: 2019-01-10 20:00:03 UTC

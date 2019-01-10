@@ -2,24 +2,32 @@
 % Please edit documentation in R/createPDF.R
 \name{create_PDF}
 \alias{create_PDF}
-\title{Make QR codes and print labels}
+\title{Make barcodes and print labels}
 \usage{
 create_PDF(user = FALSE, Labels = NULL, name = "LabelsOut",
-  ErrCorr = "H", Fsz = 2.5, ...)
+  type = "matrix", ErrCorr = "H", Fsz = 2.5, ...)
 }
 \arguments{
 \item{user}{logical. Run function using interactive mode (prompts user for
 parameter values) Default is \code{FALSE}}
 
-\item{Labels}{vector or data frame object containing label names (i.e. unique ID codes).}
+\item{Labels}{vector or data frame object containing label names (i.e. unique
+ID codes) with either UTF-8 or ASCII encoding.}
 
-\item{name}{character. Name of the PDF output file. Default is \code{"LabelsOut"}.}
+\item{name}{character. Name of the PDF output file. Default is
+\code{"LabelsOut"}.}
 
-\item{ErrCorr}{error correction value. Level of damage from low to high:
-\code{"L"}, \code{"M"}, \code{"Q"}, \code{"H"}. Default is \code{"H"}}
+\item{type}{character. Choice of \code{"linear"} code 128 or \code{"matrix"}
+QR code labels. Default is \code{"matrix"}.}
 
-\item{Fsz}{numerical. Sets font size in points. Longer ID codes may be shrunk to fit if trunaction is not used. 
-Default font size is \code{5}}
+\item{ErrCorr}{error correction value for matrix labels only. Level of damage
+from low to high: \code{"L"}, \code{"M"}, \code{"Q"}, \code{"H"}. Default
+is \code{"H"}.}
+
+\item{Fsz}{numerical. Sets font size in points. Longer ID codes may be shrunk
+to fit if truncation is not used for matrix labels. Default font size is
+\code{5}. ID codes are also shrunk automatically to fit on the label if
+actual size is bigger than label dimensions.}
 
 \item{...}{advanced arguments to modify the PDF layout. See
 \code{\link{custom_create_PDF}} for arguments. The advanced options can be
@@ -68,6 +76,13 @@ create_PDF(user = FALSE, Labels = example_df, name = file.path(tempdir(), "examp
 example_df <- data.frame(c("a1", "a2"), c("a1-b1", "a1-b2"), c("b1", "b1"))
 ## specify column from data frame
 create_PDF(user = FALSE, Labels = example_df[,2], name = file.path(tempdir(), "example_3"))
+}
+\donttest{
+## create linear (code128) label rather than matrix label
+example_df <- data.frame(c("a1", "a2"), c("a1-b1", "a1-b2"), c("b1", "b1"))
+## specify column from data frame
+create_PDF(user = FALSE, Labels = example_df, name = file.path(tempdir(),
+"example_4", type = "linear"))
 }
 }
 \seealso{
