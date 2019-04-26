@@ -303,6 +303,33 @@ create_PDF(Labels = Labels, name = "example_advanced", ErrCorr = "Q", Fsz = 2.5,
 ```
 
 
+# Formatting of text labels
 
+Trying to format text labels in the baRcodeR GUI is not recommended. 
 
+## New Lines
+
+It is possible to force formatting of labels by inserting `\n` as line breaks.
+
+## Tabs
+
+Using `\t` will create error due to the underlying `qrcode` library used in this package. One solution is to use the space character in place of tabs.
+
+```{r}
+# original label
+X <- "text\ttext"
+cat(X)
+cat(gsub("\\t", "\x20\x20\x20\x20", X))
+```
+## When reading from file
+
+R automatically escapes the escape characters when reading from file. For example, `text\ntext` will be read in as `text\\ntext` from `read.csv`. 
+
+Use a global substitution to replace the double slashes.
+
+```{r}
+X <- "text\\ntext"
+cat(X)
+cat(gsub("\\\\n","\n",X))
+```
 

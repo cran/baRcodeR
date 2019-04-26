@@ -276,4 +276,17 @@ make_labels<-function() {
 
 }
 
+#' @title baRcodeR Cheatsheet
+#' 
+#' @description This addin links to a downloadable PDF version of the baRcodeR cheatsheet.
+#' @import rstudioapi
+#' @export
+#' @examples 
+#' if(interactive()){
+#' library(baRcodeR)
+#' cheatsheet()
+#' }
 
+cheatsheet <- function(){
+  rstudioapi::sendToConsole("browseURL('https://ndownloader.figshare.com/files/14087612')")
+}

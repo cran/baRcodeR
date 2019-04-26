@@ -2,12 +2,18 @@
 #'
 #' Input a vector or data frame of ID codes to produce a PDF of barcode labels
 #' that can then be printed. The PDF setup is for the ULINE 1.75" * 0.5" WEATHER
-#' RESISTANT LABEL for laser printer; item # S-19297 (uline.ca)
+#' RESISTANT LABEL for laser printer; item # S-19297 (uline.ca). See details for
+#' how to format text labels properly.
 #'
 #' \code{qrcode_make} is the helper function for generating a QR code matrix.
 #' \code{code_128_make} is the helper function for generating a linear barcode
 #' according to code 128 set B. \code{custom_create_PDF} is the main function
 #' which sets page layout, and creates the PDF file.
+#' 
+#' The escape characters \code{\\n} and \code{\\s} (and the hex equivalents
+#' \code{\\x0A} and \code{\\x20} can be used to format text labels. Tab character
+#' \code{\\t} (\code{\\x09}) does not work for QR codes and should be replaced by
+#' a number of space characters. See the package vignette for examples.
 #'
 #' @return a PDF file containing QR-coded labels, saved to the default
 #'   directory.
@@ -313,6 +319,10 @@ custom_create_PDF <- function(user = FALSE,
 qrcode_make<-function(Labels, ErrCorr){
   # Create text label
   Xtxt<-gsub("_", "-", Labels)
+  if(nchar(Xtxt) <= 1){
+    Xtxt <- paste0("\\s\\s", Xtxt)
+    warning("Label is single character or blank. Padding with empty spaces.")
+  }
   # Create qrcode
   Xpng <- grid::rasterGrob(abs(qrcode::qrcode_gen(paste0(Xtxt), ErrorCorrectionLevel = ErrCorr, dataOutput = TRUE, plotQRcode = FALSE, mask = 3) - 1), interpolate = FALSE)
   return(Xpng)
@@ -339,11 +349,11 @@ code_128_make <- function(Labels){
   ## create quiet zone
   quiet_zone <- paste(c(1:(10)*0),collapse="")
   ## paste together in order: quiet zone, start code binary, binary label, checksum character
-  ## stop code, and quiet zone
+  ## stop code, and quiet zone. Barcode for checksum is extracted based on position in Barcodes.
   binary_label <- paste(quiet_zone, 
                         Barcodes$Barcode[Barcodes$ASCII == start_code],
                         paste(Binary_code, collapse=""),
-                        Barcodes$Barcode[Barcodes$ASCII == check_character + 32],
+                        Barcodes$Barcode[check_character + 1],
                         "1100011101011",
                         quiet_zone,
                         collapse = "", sep ="")

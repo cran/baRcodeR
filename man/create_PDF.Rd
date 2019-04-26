@@ -36,14 +36,17 @@ actual size is bigger than label dimensions.}
 }
 \value{
 a PDF file containing QR-coded labels, saved to the default directory.
-
-The default PDF setup is for ULINE 1.75" * 0.5" WEATHER RESISTANT LABEL for laser
-printer; item # S-19297 (uline.ca). The page format can be modified using
-the \code{...} (advanced arguments) for other label types.
 }
 \description{
-Input vector or data.frame of ID codes to produce a PDF of QR codes which can 
-be printed. This is a wrapper function for \code{\link{custom_create_PDF}}
+Input vector or data.frame of ID codes to produce a PDF of QR codes which can
+be printed. This is a wrapper function for \code{\link{custom_create_PDF}}.
+See details of \code{\link{custom_create_PDF}} on how to format text labels
+if needed.
+}
+\details{
+#' The default PDF setup is for ULINE 1.75" * 0.5" WEATHER RESISTANT LABEL for laser
+printer; item # S-19297 (uline.ca). The page format can be modified using
+the \code{...} (advanced arguments) for other label types.
 }
 \examples{
 ## data frame
@@ -78,7 +81,7 @@ example_df <- data.frame(c("a1", "a2"), c("a1-b1", "a1-b2"), c("b1", "b1"))
 create_PDF(user = FALSE, Labels = example_df[,2], name = file.path(tempdir(), "example_3"))
 }
 \donttest{
-## create linear (code128) label rather than matrix label
+## create linear (code128) label rather than matrix (2D/QR) labels
 example_df <- data.frame(c("a1", "a2"), c("a1-b1", "a1-b2"), c("b1", "b1"))
 ## specify column from data frame
 create_PDF(user = FALSE, Labels = example_df, name = file.path(tempdir(),

@@ -12,7 +12,7 @@
 
 <meta name="author" content="Yihan Wu and Robert I. Colautti" />
 
-<meta name="date" content="2019-01-10" />
+<meta name="date" content="2019-04-26" />
 
 <title>baRcodeR</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">baRcodeR</h1>
 <h4 class="author"><em>Yihan Wu and Robert I. Colautti</em></h4>
-<h4 class="date"><em>2019-01-10</em></h4>
+<h4 class="date"><em>2019-04-26</em></h4>
 
 
 
@@ -306,6 +306,35 @@ IDcodes&lt;-<span class="kw">read.csv</span>(<span class="st">&quot;IDcodes.csv&
 <p>Arguments can be passed from <code>create_PDF</code> to <code>custom_create_PDF</code> as <code>create_PDF</code> is just a wrapper for <code>custom_create_PDF</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## This will create a pdf sheet where the labels are printed in columns then rows. It will skip 3 rows from the top and 1 column from the left. 
 <span class="kw">create_PDF</span>(<span class="dt">Labels =</span> Labels, <span class="dt">name =</span> <span class="st">&quot;example_advanced&quot;</span>, <span class="dt">ErrCorr =</span> <span class="st">&quot;Q&quot;</span>, <span class="dt">Fsz =</span> <span class="fl">2.5</span>, <span class="dt">Across =</span> F, <span class="dt">ERows =</span> <span class="dv">3</span>, <span class="dt">ECol =</span> <span class="dv">1</span>)</code></pre></div>
+</div>
+<div id="formatting-of-text-labels" class="section level1">
+<h1>Formatting of text labels</h1>
+<p>Trying to format text labels in the baRcodeR GUI is not recommended.</p>
+<div id="new-lines" class="section level2">
+<h2>New Lines</h2>
+<p>It is possible to force formatting of labels by inserting <code>\n</code> as line breaks.</p>
+</div>
+<div id="tabs" class="section level2">
+<h2>Tabs</h2>
+<p>Using <code>\t</code> will create error due to the underlying <code>qrcode</code> library used in this package. One solution is to use the space character in place of tabs.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># original label</span>
+X &lt;-<span class="st"> &quot;text</span><span class="ch">\t</span><span class="st">text&quot;</span>
+<span class="kw">cat</span>(X)</code></pre></div>
+<pre><code>## text text</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">gsub</span>(<span class="st">&quot;</span><span class="ch">\\</span><span class="st">t&quot;</span>, <span class="st">&quot;</span><span class="ch">\x20\x20\x20\x20</span><span class="st">&quot;</span>, X))</code></pre></div>
+<pre><code>## text    text</code></pre>
+</div>
+<div id="when-reading-from-file" class="section level2">
+<h2>When reading from file</h2>
+<p>R automatically escapes the escape characters when reading from file. For example, <code>text\ntext</code> will be read in as <code>text\\ntext</code> from <code>read.csv</code>.</p>
+<p>Use a global substitution to replace the double slashes.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">X &lt;-<span class="st"> &quot;text</span><span class="ch">\\</span><span class="st">ntext&quot;</span>
+<span class="kw">cat</span>(X)</code></pre></div>
+<pre><code>## text\ntext</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">gsub</span>(<span class="st">&quot;</span><span class="ch">\\\\</span><span class="st">n&quot;</span>,<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>,X))</code></pre></div>
+<pre><code>## text
+## text</code></pre>
+</div>
 </div>
 
 

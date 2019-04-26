@@ -1,4 +1,9 @@
 Name: baRcodeR GUI
-Description: Generate unique ID codes with printable 2D barcodes.
+Description: Generate unique ID codes with printable linear and 2D barcodes.
 Binding: make_labels
 Interactive: true
+
+Name: baRcodeR Cheatsheet
+Description: Link to downloadable PDF version of package cheatsheet.
+Binding: cheatsheet
+Interactive: false

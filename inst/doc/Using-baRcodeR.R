@@ -56,3 +56,14 @@ IDcodes
 #  ## This will create a pdf sheet where the labels are printed in columns then rows. It will skip 3 rows from the top and 1 column from the left.
 #  create_PDF(Labels = Labels, name = "example_advanced", ErrCorr = "Q", Fsz = 2.5, Across = F, ERows = 3, ECol = 1)
 
+## ------------------------------------------------------------------------
+# original label
+X <- "text\ttext"
+cat(X)
+cat(gsub("\\t", "\x20\x20\x20\x20", X))
+
+## ------------------------------------------------------------------------
+X <- "text\\ntext"
+cat(X)
+cat(gsub("\\\\n","\n",X))
+

@@ -17,5 +17,5 @@ test_that("input errors are produced", {
   expect_error(custom_create_PDF(Labels = c(1, 2), x_space = 251), "ERROR: x_space value out of bounds.")
   expect_error(custom_create_PDF(Labels = c(1, 2), y_space = 21), "ERROR: y_space value out of bounds.")
   expect_error(custom_create_PDF(Labels = c(1, 2), y_space = 251), "ERROR: y_space value out of bounds.")
-  
+  expect_warning(qrcode_make(1, "H"), "Label is single character or blank.")
 })

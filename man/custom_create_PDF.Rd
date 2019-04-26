@@ -95,13 +95,19 @@ a PDF file containing QR-coded labels, saved to the default
 \description{
 Input a vector or data frame of ID codes to produce a PDF of barcode labels
 that can then be printed. The PDF setup is for the ULINE 1.75" * 0.5" WEATHER
-RESISTANT LABEL for laser printer; item # S-19297 (uline.ca)
+RESISTANT LABEL for laser printer; item # S-19297 (uline.ca). See details for
+how to format text labels properly.
 }
 \details{
 \code{qrcode_make} is the helper function for generating a QR code matrix.
 \code{code_128_make} is the helper function for generating a linear barcode
 according to code 128 set B. \code{custom_create_PDF} is the main function
 which sets page layout, and creates the PDF file.
+
+The escape characters \code{\\n} and \code{\\s} (and the hex equivalents
+\code{\\x0A} and \code{\\x20} can be used to format text labels. Tab character
+\code{\\t} (\code{\\x09}) does not work for QR codes and should be replaced by
+a number of space characters. See the package vignette for examples.
 }
 \seealso{
 \code{\link{create_PDF}}

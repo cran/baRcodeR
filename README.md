@@ -38,7 +38,7 @@ library(baRcodeR)
 * generate printable PDF files of paired ID codes and QR barcodes with default spacing for ULINE 1.75" * 0.5" WEATHER RESISTANT LABEL for laser printer; item # S-19297 (uline.ca)
 * customize the PDF layout for any type of printable format (e.g, vinyl stickers, waterproof paper)
 * generate reproducible code for archival purposes (e.g. in publications or online repositories)
-* create CSV files to link unique IDs and sampling hierarchy with downstream data collection workflows
+* create CSV files to link unique IDs and sampling hierarchy with downstream data collection workflows. For example, the PyTrackDat pipeline can be used to set up a web-based data collection platform: https://github.com/ColauttiLab/PyTrackDat/
 
 ## Using the RStudio addin 
 
