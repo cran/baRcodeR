@@ -1,26 +1,57 @@
 Package: baRcodeR
-Title: Labelling, Tracking, and Collecting Data from Biological Samples
-Version: 0.1.3
-Authors@R: c(person("Yihan", "Wu", role="aut", email = "yihan.wu@queensu.ca"), person("Robert", "Colautti", email = "robert.colautti@queensu.ca", role = c("aut", "cre")))
-Maintainer: Robert Colautti <robert.colautti@queensu.ca>
-Description: Tools to generate unique identifiers and printable barcoded labels for sample management. 
-    The creation of unique ID codes and printable PDF files can be initiated by standard commands, 
-    user prompts, or through a GUI addin for R Studio. Both single-level and hierarchical labels can 
-    be created in the command line interactively or non-interactively. 
-Depends: R (>= 3.4.0), qrcode
+Title: Label Creation for Tracking and Collecting Data from Biological
+        Samples
+Version: 0.1.4
+Authors@R: 
+    c(person(given = "Yihan",
+             family = "Wu",
+             role = c("aut", "cre"),
+             email = "yihan.wu@queensu.ca",
+             comment = c(ORCID = "0000-0002-1202-4208")),
+      person(given = "Robert",
+             family = "Colautti",
+             role = c("aut"),
+             email = "robert.colautti@queensu.ca",
+             comment = c(ORCID = "0000-0003-4213-0711")),
+      person(given = "Emily",
+             family = "Bao",
+             role = "ctb",
+             email = "13syeb@queensu.ca"),
+      person(given = "Lluís",
+             family = "Revilla Sancho",
+             role = c("rev"),
+             email = "lluis.revilla@gmail.com",
+             comment = c(ORCID = "0000-0001-9747-2570")),
+      person(given = "Rayna",
+             family = "Harris",
+             role = c("rev"),
+             email = "rmharris@ucdavis.edu"))
+Description: Tools to generate unique identifier codes and
+    printable barcoded labels for the management of biological samples.
+    The creation of unique ID codes and printable PDF files can be
+    initiated by standard commands, user prompts, or through a GUI addin
+    for R Studio. Biologically informative codes can be included for
+    hierarchically structured sampling designs.
 License: GPL-3
-Encoding: UTF-8
-LazyData: true
-Imports: DT (>= 0.3), grDevices, grid, miniUI (>= 0.1.1), shiny (>=
-        0.13), rstudioapi
-Suggests: testthat, knitr, rmarkdown
-RoxygenNote: 6.1.0
+URL: https://docs.ropensci.org/baRcodeR (website)
+        https://github.com/ropensci/baRcodeR
+BugReports: https://github.com/ropensci/baRcodeR/issues
+Depends: qrcode, R (>= 3.4.0)
+Imports: DT (>= 0.3), grDevices, grid, miniUI (>= 0.1.1), rstudioapi,
+        shiny (>= 0.13)
+Suggests: covr, knitr, rmarkdown, shinytest, testthat (>= 2.1.0)
 VignetteBuilder: knitr
-URL: https://github.com/yihanwu/baRcodeR
-BugReports: https://github.com/yihanwu/baRcodeR/issues
+Encoding: UTF-8
+Language: en-CA
+LazyData: true
+RoxygenNote: 6.1.1
 NeedsCompilation: no
-Packaged: 2019-04-26 19:30:38 UTC; colauttilab
-Author: Yihan Wu [aut],
-  Robert Colautti [aut, cre]
+Packaged: 2019-12-05 22:50:37 UTC; YIHANWU
+Author: Yihan Wu [aut, cre] (<https://orcid.org/0000-0002-1202-4208>),
+  Robert Colautti [aut] (<https://orcid.org/0000-0003-4213-0711>),
+  Emily Bao [ctb],
+  Lluís Revilla Sancho [rev] (<https://orcid.org/0000-0001-9747-2570>),
+  Rayna Harris [rev]
+Maintainer: Yihan Wu <yihan.wu@queensu.ca>
 Repository: CRAN
-Date/Publication: 2019-04-26 19:50:03 UTC
+Date/Publication: 2019-12-07 00:10:02 UTC

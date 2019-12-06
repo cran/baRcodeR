@@ -7,7 +7,7 @@
 \title{Make barcodes and print labels}
 \usage{
 custom_create_PDF(user = FALSE, Labels = NULL, name = "LabelsOut",
-  type = "matrix", ErrCorr = "H", Fsz = 5, Across = TRUE,
+  type = "matrix", ErrCorr = "H", Fsz = 12, Across = TRUE,
   ERows = 0, ECols = 0, trunc = TRUE, numrow = 20, numcol = 4,
   page_width = 8.5, page_height = 11, width_margin = 0.25,
   height_margin = 0.5, label_width = NA, label_height = NA,
@@ -25,14 +25,16 @@ parameter values) Default is \code{FALSE}}
 ID codes) with either UTF-8 or ASCII encoding.}
 
 \item{name}{character. Name of the PDF output file. Default is
-\code{"LabelsOut"}.}
+\code{"LabelsOut"}. A file named \code{name.pdf} will be saved to the
+working directory by default. Use \code{"dirname/name"} to produce a file
+called \code{name.pdf} in the \code{dirname} directory.}
 
 \item{type}{character. Choice of \code{"linear"} code 128 or \code{"matrix"}
 QR code labels. Default is \code{"matrix"}.}
 
 \item{ErrCorr}{error correction value for matrix labels only. Level of damage
 from low to high: \code{"L"}, \code{"M"}, \code{"Q"}, \code{"H"}. Default
-is \code{"H"}.}
+is \code{"H"}. See details for explanation of values.}
 
 \item{Fsz}{numerical. Sets font size in points. Longer ID codes may be shrunk
 to fit if truncation is not used for matrix labels. Default font size is
@@ -53,7 +55,7 @@ for printing on partially-used label sheets.}
 
 \item{trunc}{logical. Text is broken into multiple lines for longer ID codes,
 to prevent printing off of the label area. Default is \code{TRUE}. If
-\code{trunc = F}, and text is larger than the physical label, the text will
+\code{trunc = FALSE}, and text is larger than the physical label, the text will
 be shrunk down automatically.}
 
 \item{numrow}{numerical. Number of rows per page. Default is \code{20}.}
@@ -104,10 +106,64 @@ how to format text labels properly.
 according to code 128 set B. \code{custom_create_PDF} is the main function
 which sets page layout, and creates the PDF file.
 
+Correction levels for QR codes refer to the level of damage a label can
+tolerate before the label become unreadable by a scanner (L = Low (7\%), M =
+Medium (15\%), Q = Quantile (25\%), H = High (30\%)). So a label with L
+correction can lose up to at most 7% of the code before it is unreadable
+while a H label can lose up to 30% of the code. This also means that L codes
+can be printed at smaller sizes compared to H codes.
+
 The escape characters \code{\\n} and \code{\\s} (and the hex equivalents
 \code{\\x0A} and \code{\\x20} can be used to format text labels. Tab character
 \code{\\t} (\code{\\x09}) does not work for QR codes and should be replaced by
 a number of space characters. See the package vignette for examples.
+
+If \code{ECol} or \code{ERow} is greater than \code{numcol} and \code{numrow}, 
+the labels will be printed starting on the second page.
+}
+\examples{
+
+## this is the same examples used with create_PDF
+## data frame
+example_vector <- as.data.frame(c("ao1", "a02", "a03"))
+
+\dontrun{
+## run with default options
+## pdf file will be "example.pdf" saved into a temp directory
+
+temp_file <- tempfile()
+
+custom_create_PDF(Labels = example_vector, name = temp_file)
+
+## view example output from temp folder
+system2("open", paste0(temp_file, ".pdf"))
+}
+
+## run interactively. Overrides default pdf options
+if(interactive()){
+    custom_create_PDF(user = TRUE, Labels = example_vector)
+}
+
+\dontrun{
+## run using a data frame, automatically choosing the "label" column
+example_df <- data.frame("level1" = c("a1", "a2"), "label" = c("a1-b1",
+"a1-b2"), "level2" = c("b1", "b1"))
+custom_create_PDF(user = FALSE, Labels = example_df, name = file.path(tempdir(), "example_2"))
+}
+
+\dontrun{
+## run using an unnamed data frame
+example_df <- data.frame(c("a1", "a2"), c("a1-b1", "a1-b2"), c("b1", "b1"))
+## specify column from data frame
+custom_create_PDF(user = FALSE, Labels = example_df[,2], name = file.path(tempdir(), "example_3"))
+}
+\dontrun{
+## create linear (code128) label rather than matrix (2D/QR) labels
+example_df <- data.frame(c("a1", "a2"), c("a1-b1", "a1-b2"), c("b1", "b1"))
+## specify column from data frame
+custom_create_PDF(user = FALSE, Labels = example_df, name = file.path(tempdir(),
+"example_4", type = "linear"))
+}  
 }
 \seealso{
 \code{\link{create_PDF}}

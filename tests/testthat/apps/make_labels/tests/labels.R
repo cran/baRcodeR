@@ -1,0 +1,11 @@
+app <- ShinyDriver$new("../")
+app$snapshotInit("labels")
+
+app$setInputs(prefix = "example", wait_=FALSE, values_=FALSE)
+app$setInputs(start_number = character(0), wait_=FALSE, values_=FALSE)
+app$setInputs(start_number = 9, wait_=FALSE, values_=FALSE)
+app$setInputs(end_number = character(0), wait_=FALSE, values_=FALSE)
+app$setInputs(end_number = 11, wait_=FALSE, values_=FALSE)
+app$setInputs(label_df_rows_current = c(1, 2, 3), allowInputNoBinding_ = TRUE)
+app$setInputs(label_df_rows_all = c(1, 2, 3), allowInputNoBinding_ = TRUE)
+app$snapshot()

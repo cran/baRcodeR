@@ -10,10 +10,20 @@
 #' according to code 128 set B. \code{custom_create_PDF} is the main function
 #' which sets page layout, and creates the PDF file.
 #' 
+#' Correction levels for QR codes refer to the level of damage a label can
+#' tolerate before the label become unreadable by a scanner (L = Low (7\%), M =
+#' Medium (15\%), Q = Quantile (25\%), H = High (30\%)). So a label with L
+#' correction can lose up to at most 7% of the code before it is unreadable
+#' while a H label can lose up to 30% of the code. This also means that L codes
+#' can be printed at smaller sizes compared to H codes.
+#' 
 #' The escape characters \code{\\n} and \code{\\s} (and the hex equivalents
 #' \code{\\x0A} and \code{\\x20} can be used to format text labels. Tab character
 #' \code{\\t} (\code{\\x09}) does not work for QR codes and should be replaced by
 #' a number of space characters. See the package vignette for examples.
+#' 
+#' If \code{ECol} or \code{ERow} is greater than \code{numcol} and \code{numrow}, 
+#' the labels will be printed starting on the second page. 
 #'
 #' @return a PDF file containing QR-coded labels, saved to the default
 #'   directory.
@@ -23,12 +33,14 @@
 #' @param Labels vector or data frame object containing label names (i.e. unique
 #'   ID codes) with either UTF-8 or ASCII encoding.
 #' @param name character. Name of the PDF output file. Default is
-#'   \code{"LabelsOut"}.
+#'   \code{"LabelsOut"}. A file named \code{name.pdf} will be saved to the
+#'   working directory by default. Use \code{"dirname/name"} to produce a file
+#'   called \code{name.pdf} in the \code{dirname} directory.
 #' @param type character. Choice of \code{"linear"} code 128 or \code{"matrix"}
 #'   QR code labels. Default is \code{"matrix"}.
 #' @param ErrCorr error correction value for matrix labels only. Level of damage
 #'   from low to high: \code{"L"}, \code{"M"}, \code{"Q"}, \code{"H"}. Default
-#'   is \code{"H"}.
+#'   is \code{"H"}. See details for explanation of values.
 #' @param Fsz numerical. Sets font size in points. Longer ID codes may be shrunk
 #'   to fit if truncation is not used for matrix labels. Default font size is
 #'   \code{5}. ID codes are also shrunk automatically to fit on the label if
@@ -44,7 +56,7 @@
 #'   for printing on partially-used label sheets.
 #' @param trunc logical. Text is broken into multiple lines for longer ID codes,
 #'   to prevent printing off of the label area. Default is \code{TRUE}. If
-#'   \code{trunc = F}, and text is larger than the physical label, the text will
+#'   \code{trunc = FALSE}, and text is larger than the physical label, the text will
 #'   be shrunk down automatically.
 #' @param numrow numerical. Number of rows per page. Default is \code{20}.
 #' @param numcol numerical. Number of columns per page. Default is \code{4}.
@@ -68,7 +80,51 @@
 #' @param y_space numerical. The height position of the text on the physical
 #'   label as a proportion of the label height. Only applies when \code{type =
 #'   "matrix"}. A value between \code{0} and \code{1}. Default is \code{0.5}.
-
+#'   
+#'   
+#' @examples
+#' 
+#' ## this is the same examples used with create_PDF
+#' ## data frame
+#' example_vector <- as.data.frame(c("ao1", "a02", "a03"))
+#'
+#' \dontrun{
+#' ## run with default options
+#' ## pdf file will be "example.pdf" saved into a temp directory
+#' 
+#' temp_file <- tempfile()
+#' 
+#' custom_create_PDF(Labels = example_vector, name = temp_file)
+#' 
+#' ## view example output from temp folder
+#' system2("open", paste0(temp_file, ".pdf"))
+#' }
+#' 
+#' ## run interactively. Overrides default pdf options
+#' if(interactive()){
+#'     custom_create_PDF(user = TRUE, Labels = example_vector)
+#' }
+#' 
+#' \dontrun{
+#' ## run using a data frame, automatically choosing the "label" column
+#' example_df <- data.frame("level1" = c("a1", "a2"), "label" = c("a1-b1",
+#' "a1-b2"), "level2" = c("b1", "b1"))
+#' custom_create_PDF(user = FALSE, Labels = example_df, name = file.path(tempdir(), "example_2"))
+#' }
+#' 
+#' \dontrun{
+#' ## run using an unnamed data frame
+#' example_df <- data.frame(c("a1", "a2"), c("a1-b1", "a1-b2"), c("b1", "b1"))
+#' ## specify column from data frame
+#' custom_create_PDF(user = FALSE, Labels = example_df[,2], name = file.path(tempdir(), "example_3"))
+#' }
+#' \dontrun{
+#' ## create linear (code128) label rather than matrix (2D/QR) labels
+#' example_df <- data.frame(c("a1", "a2"), c("a1-b1", "a1-b2"), c("b1", "b1"))
+#' ## specify column from data frame
+#' custom_create_PDF(user = FALSE, Labels = example_df, name = file.path(tempdir(),
+#' "example_4", type = "linear"))
+#' }  
 #' @seealso \code{\link{create_PDF}}
 #' @export
 #' @import qrcode
@@ -78,7 +134,7 @@ custom_create_PDF <- function(user = FALSE,
                               name = "LabelsOut",
                               type = "matrix",
                               ErrCorr = "H",
-                              Fsz = 5,
+                              Fsz = 12,
                               Across = TRUE,
                               ERows = 0,
                               ECols = 0,
@@ -96,10 +152,10 @@ custom_create_PDF <- function(user = FALSE,
                               ){
   if (length(Labels) == 0) stop("Labels do not exist. Please pass in Labels")
   # what to do depending on class of Label input
-  if(class(Labels) %in% c("character", "integer", "numeric", "factor")){
+  if(class(Labels)[1] %in% c("character", "integer", "numeric", "factor")){
     # treat as vector
     Labels <- Labels
-  } else if (class(Labels) == "data.frame") {
+  } else if (class(Labels)[1] == "data.frame") {
     if (any(tolower(names(Labels)) == "label")){
       Labels <- Labels[, "label"]
     } else {
@@ -109,209 +165,241 @@ custom_create_PDF <- function(user = FALSE,
   } else {
     stop("Label input not a vector or a data frame. Please check your input.")
   }
-  if (any(unlist(lapply(c(numcol, numrow, Fsz, ERows, ECols, trunc, page_width, page_height, height_margin, width_margin, x_space, y_space), class)) != "numeric") == TRUE) {
+  if (all(vapply(c(
+    numcol, numrow, 
+    Fsz, ERows, ECols, 
+    trunc, page_width, page_height, 
+    height_margin, width_margin, 
+    x_space, y_space), is.numeric, logical(1L))) != TRUE) {
     stop("One or more numerical parameters are not numeric")
   }
   labelLength <- max(nchar(paste(Labels)))
   if (x_space > 1 | x_space < 0) stop("ERROR: x_space value out of bounds. Must be between 0 and 1")
   if (y_space < 0 | y_space > 1) stop("ERROR: y_space value out of bounds. Must be between 0 and 1")
   # clean up any open graphical devices if function fails
-  on.exit(grDevices::dev.off())
+  on.exit(grDevices::graphics.off())
   # if user prompt has been set to true
   if (user == TRUE){
-    # possible inputs
-    inputCheck <- c("T", "t", "F", "f")
-    yesNo <- c("Y", "N")
+    
     ## ask for name
-    name <- readline(paste0("Please enter name for PDF output file: "))
+    name <- string_input("Please enter name for PDF output file: ")
     ## Set font size
-    Fsz <- noquote(as.numeric(readline("Please enter a font size ")))
-    while (Fsz <= 0){
-      noquote(print("Invalid input, please specify a font size greater than 0"))
-      Fsz <- noquote(as.numeric(readline("Please enter a font size greater than 0: ")))
-    }
+    Fsz <- numeric_input("Please enter a font size: ", integer = FALSE)
     ## Error correction
-    ErrCorr <- noquote(toupper(readline("Specify an error correction - L, M, Q, H: ")))
-    errCheck <- c("L", "l", "M", "m", "Q", "q", "H", "h")
+    
+    ErrCorr <- switch(
+      fake_menu(
+        c("L (up to 7% damage)", "M (up to 15% damage)", 
+          "Q (up to 25% damage)", "H (up to 30% damage)"), 
+        "Select an error correction level. "),
+      "L", "M", "Q", "H")
+    
     # check errCorr input
-    while((ErrCorr %in% errCheck) == FALSE){
-      noquote(print("Invalid input, please only enter what is specified"))
-      ErrCorr <- noquote(toupper(readline("Specify an error correction - L, M, Q, H: ")))
-    }
-    Advanced <- noquote(toupper(readline("Edit advanced parameters? (Y/N): ")))
-    while((Advanced %in% yesNo) == FALSE){
-      noquote(print("Invalid input"))
-      Advanced <- noquote(toupper(readline("Edit advanced parameters? (Y/N): ")))
-    }
-    if (Advanced =="Y") {
-      type <- noquote(toupper(readline("Linear barcodes ( Y = Linear, N = matrix): ")))
-      while (type %in% yesNo) {
-        noquote(print("Invalid input"))
-        type <- noquote(toupper(readline("Linear barcodes ( Y = Linear, N = matrix): ")))
-      }
+    Advanced <- switch(
+      fake_menu(c("Yes", "No"),
+                  "Edit advanced parameters?"), 
+      TRUE, FALSE)
+    
+    if (Advanced) {
+      type <- switch(
+        fake_menu(c("Matrix QR Code", "Linear"),
+                    "Type of Barcode: "),
+        "matrix", "linear"
+      )
+      
       ## Set to TRUE to print labels across rows instead of down columns
-      Across <- noquote(toupper(readline("Please enter T or F to print across: ")))
-      while((Across %in% inputCheck) == FALSE){
-        noquote(print("Invalid input"))
-        Across <- noquote(toupper(readline("Please enter T or F to print across: ")))
+      Across <- switch(fake_menu(c("Yes", "No"), 
+                                   "Print labels across?"), 
+                       TRUE, FALSE)
+      
+      # Split text into rows (prevents text cutoff with narrow labels)
+      trunc<- switch(fake_menu(c("Yes", "No"), 
+                                 "Truncate longer labels into multiple lines if necessary?"), 
+                     TRUE, FALSE)
+      
+      ERows <- numeric_input("Number of rows to skip? (enter 0 for default): ")
+      
+      ECols <- numeric_input("Number of cols to skip? (enter 0 for default): ")
+      
+      numrow <- numeric_input("Number of rows per page: ")
+      
+      numcol <- numeric_input("Number of col per page: ")
+      
+      height_margin <- numeric_input(
+        "Please enter the height margin of page (in inches): ", integer = FALSE)
+      
+      width_margin <- numeric_input(
+        "Please enter the width margin of page (in inches): ", integer = FALSE)
+      
+      label_width <- numeric_input(
+        "Please enter the width of the label (in inches): ", integer = FALSE)
+      
+      label_height <- numeric_input(
+        "Please enter the height of the label (in inches): ", integer = FALSE)
+      
+      if(type == "matrix"){
+        space <- switch(
+          numeric_input("Change distances between QR code and text label?\n 1: Yes \n 2: No"), 
+          TRUE, FALSE)
       }
-      # Split text into rows (prevents text cutoff when label has >8 characters without \\n in labels)
-      trunc<-noquote(toupper(readline("Do you want to split text into rows? (T/F): ")))
-      while((trunc %in% inputCheck) == FALSE){
-        noquote(print("Invalid input"))
-        trunc <- noquote(toupper(readline("Do you want to split text into rows? (T/F): ")))
-      }
-      ERows <- noquote(as.numeric(readline("Number of rows to skip? (enter 0 for default): ")))
-      ECols <- noquote(as.numeric(readline("Number of cols to skip? (enter 0 for default): ")))
-      numrow <- as.numeric(readline("# of rows per page: "))
-      while(is.numeric(numrow) == FALSE) {
-        noquote(print("Invalid input"))
-        numrow <- as.numeric(readline("# of rows per page: "))
-      }
-      numcol <- as.numeric(readline("# of col per page: "))
-      while(is.numeric(numcol) == FALSE) {
-        noquote(print("Invalid input"))
-        numcol <- as.numeric(readline("# of col per page: "))
-      }
-      height_margin <- as.numeric(readline("Please enter the height margin of page (in inch): "))
-      while(is.numeric(height_margin) == FALSE){
-        noquote(print("Invalid input"))
-        height_margin <- as.numeric(readline("Please enter the height margin of page (in inch): "))
-      }
-      width_margin <- as.numeric(readline("Please enter the width margin of page (in inch): "))
-      while(is.numeric(width_margin) == FALSE){
-        noquote(print("Invalid input"))
-        width_margin <- as.numeric(readline("Please enter the width margin of page (in inch): "))
-      }
-      label_width <- as.numeric(readline("Please enter the width of the label (in inch): "))
-      while(is.numeric(label_width) == FALSE){
-        noquote(print("Invalid input"))
-        label_width <- as.numeric(readline("Please enter the width of the label (in inch): "))
-      }
-      label_height <- as.numeric(readline("Please enter the height of the label (in inch): "))
-      while(is.numeric(label_height) == FALSE){
-        noquote(print("Invalid input"))
-        label_height <- as.numeric(readline("Please enter the height of the label (in inch): "))
-      }
-      space <- toupper(readline("change distance between qrcode and label? (y/n): "))
-      while((space %in% yesNo) == FALSE){
-        noquote(print("Invalid input"))
-        space<-toupper(readline("change distance between qrcode and label? (y/n): "))
-      }
+      
       x_space <- 0
       y_space <- 0.5
-      if (space=="Y"){
-        x_space <- as.numeric(readline("Please enter a distance between 0 and 1: "))
-        while((x_space < 1 | x_space > 0)){
+      if (space){
+        x_space <- numeric_input("Please enter a number between 0 and 1 for \n 
+                                 horizontal distance between QR code and label: ", 
+                                 integer = FALSE)
+        while(x_space > 1 ){
           noquote(print("Invalid input"))
-          x_space <- as.numeric(readline("Please enter a distance between 0 and 1: "))
+          x_space <- numeric_input("Please enter a number between 0 and 1: ", integer = FALSE)
         }
-        y_space <- as.numeric(readline("Please enter a value between 0 and 1: "))
-        while((x_space < 0 | x_space > 1)){
+        
+        y_space <- numeric_input("Please enter a distance between 0 and 1 for \n
+                                 vertical distance from bottom: ", integer = FALSE)
+        
+        while(y_space > 1){
           noquote(print("Invalid input"))
-          y_space <- as.numeric(readline("Please enter a distance between 0 and 1:"))
+          numeric_input("Please enter a distance between 0 and 1: ", integer = FALSE)
         }
       }
     } ## end of advanced options loop
+    
+  }
 
-
-  } # user ask == T
-  # Dummy data.frame for plotting
-
-  # if (Fsz >= 2.2 && Fsz <= 2.5 && labelLength >= 27) stop("ERROR: not enought space to print full label, please decrease font size")
-  
   width_margin <- page_width - width_margin * 2
   height_margin <- page_height - height_margin * 2
-  if(is.na(label_width)){label_width <- width_margin/numcol}
-  if(is.na(label_height)){label_height <- height_margin/numrow}
-  if(type == "linear" & label_width / labelLength < 0.03) warning("Linear barcodes created will have bar width smaller than 0.03 inches which may be unreadable by some barcode scanners.")
-  if(!is.numeric(c(label_width, label_height))) stop("label_width and label_height should be set to NULL or a numeric value.")
-  # if (cust_spacing == T) {
-  #   y_space <- x_space - (as.integer(x_space * 0.5)) - 15
-  # } else {
-  #   y_space <- 182
-  # }
+  
+  if(!is.numeric(label_width)){label_width <- width_margin/numcol}
+  if(!is.numeric(label_height)){label_height <- height_margin/numrow}
+  
+  if(type == "linear" & label_width / labelLength < 0.03) 
+    warning("Linear barcodes created will have bar width smaller than 0.03 inches. \n  Increase label width to make them readable by all scanners.")
+  
   column_space <- (width_margin - label_width * numcol)/(numcol - 1)
   row_space <- (height_margin - label_height * numrow)/(numrow - 1)
+  
   # Viewport Setup
   ## grid for page, the layout is set up so last row and column do not include the spacers for the other columns
-  barcode_layout <- grid::grid.layout(numrow, numcol, widths = grid::unit(c(rep(label_width + column_space, numcol-1), label_width), "in"), heights = grid::unit(c(rep(label_height + row_space, numrow-1), label_height), "in"))
+  barcode_layout <- grid::grid.layout(numrow, 
+                                      numcol, 
+                                      widths = grid::unit(c(rep(label_width + column_space, numcol-1), label_width), "in"),
+                                      heights = grid::unit(c(rep(label_height + row_space, numrow-1), label_height), "in")
+                                      )
+  
   ## change viewport and barcode generator depending on qr or 1d barcodes
   if(type == "linear"){
-    code_vp <- grid::viewport(x=grid::unit(0.05, "npc"), y=grid::unit(0.8, "npc"), width = grid::unit(0.9 *label_width, "in"), height = grid::unit(0.8 * label_height, "in"), just=c("left", "top"))
+    code_vp <- grid::viewport(x=grid::unit(0.05, "npc"), 
+                              y=grid::unit(0.8, "npc"), 
+                              width = grid::unit(0.9 *label_width, "in"), 
+                              height = grid::unit(0.8 * label_height, "in"), 
+                              just=c("left", "top"))
+    
     text_height <- ifelse(Fsz / 72 > label_height * 0.3, label_height * 0.3, Fsz/72)
-    label_vp <- grid::viewport(x=grid::unit(0.5, "npc"), y = grid::unit(1, "npc"), width = grid::unit(1, "npc"), height = grid::unit(text_height, "in"), just = c("centre", "top"))
+    
+    label_vp <- grid::viewport(x=grid::unit(0.5, "npc"), 
+                               y = grid::unit(1, "npc"), 
+                               width = grid::unit(1, "npc"), 
+                               height = grid::unit(text_height, "in"), 
+                               just = c("centre", "top"))
+    
     Fsz <- ifelse(Fsz / 72 > label_height * 0.3, label_height * 72 * 0.3 , Fsz)
-    label_plots <- sapply(as.character(Labels), code_128_make , USE.NAMES = T, simplify = F)
+    
+    label_plots <- sapply(as.character(Labels), code_128_make , USE.NAMES = TRUE, simplify = FALSE)
   } else if (type =="matrix"){
     ## vp for the qrcode within the grid layout
-    code_vp <- grid::viewport(x=grid::unit(0.05, "npc"), y=grid::unit(0.8, "npc"), width = grid::unit(0.3 *label_width, "in"), height = grid::unit(0.6 * label_height, "in"), just=c("left", "top"))
+    code_vp <- grid::viewport(x=grid::unit(0.05, "npc"), 
+                              y=grid::unit(0.8, "npc"), 
+                              width = grid::unit(0.3 *label_width, "in"), 
+                              height = grid::unit(0.6 * label_height, "in"), 
+                              just=c("left", "top"))
+    
     ## vp for the text label within the grid layout, scaling the x_space by 0.6 makes sure it will not overlap with the qrcode
-    label_vp <- grid::viewport(x=grid::unit((0.4 + 0.6*x_space)*label_width, "in"), y=grid::unit(y_space, "npc"), width = grid::unit(0.4, "npc"), height = grid::unit(0.8, "npc"), just=c("left", "center"))
+    label_vp <- grid::viewport(x=grid::unit((0.4 + 0.6*x_space)*label_width, "in"), 
+                               y=grid::unit(y_space, "npc"), 
+                               width = grid::unit(0.4, "npc"), 
+                               height = grid::unit(0.8, "npc"), 
+                               just=c("left", "center"))
+    
     # generate qr, most time intensive part
-    label_plots <- sapply(as.character(Labels), qrcode_make, ErrCorr = ErrCorr, USE.NAMES = T, simplify = F)
+        label_plots <- sapply(as.character(Labels), qrcode_make, ErrCorr = ErrCorr, USE.NAMES = TRUE, simplify = FALSE)
+  } else {stop("Barcode type must be linear or matrix")}
+
+  # generate label positions
+  
+  if(Across){
+    # across = TRUE
+    positions <- expand.grid(x = 1:numcol, y = 1:numrow)
+  } else {
+    # across = FALSE
+    positions <- expand.grid(y = 1:numrow, x = 1:numcol)
   }
+
+  # make df of position for each label
+  # this extra 5 is so that even if starting position is last cell, there are enough positions generated, hopefully
+  duplication <- ceiling(length(Labels) / nrow(positions)) + 5
+  
+  label_positions <- do.call("rbind", replicate(duplication, positions, simplify = FALSE))
+  
+  # condition here for col/row skipping
+  starting_pos_index <- min(which(label_positions$x == ECols + 1  & label_positions$y == ERows + 1))
+  if(ECols > numcol | ERows > numrow){
+      warning("Number of rows/columns to skip greater than number of rows/columns on page. Labels will start in top left corner.") 
+      starting_pos_index <- 1
+  }
+  label_positions <- label_positions[seq(starting_pos_index, starting_pos_index + length(Labels)),]
+  
   # File Creation
-  x_pos <- ERows + 1
-  y_pos <- ECols + 1
+
   oname <- paste0(name, ".pdf")
-  grDevices::pdf(oname, width = page_width, height = page_height, onefile = TRUE, family = "Courier") # Standard North American 8.5 x 11
+  grDevices::pdf(oname, 
+                 width = page_width, 
+                 height = page_height, 
+                 onefile = TRUE, 
+                 family = "Courier") # Standard North American 8.5 x 11
+  
   bc_vp = grid::viewport(layout = barcode_layout)
   grid::pushViewport(bc_vp)
   
-  for (i in 1:length(label_plots)){
+  for (i in seq(1,length(label_plots))){
+    
     # Split label to count characters
     Xsplt <- names(label_plots[i])
-    if(trunc == TRUE){  # Truncate string across lines if trunc==T
-      # if(nchar(Xsplt) > 27){Xsplt <- Xsplt[1:27]}
-      # If remaining string is > 8 characters, split into separate lines
+    lab_pos <- label_positions[i,]
+    
+    if(all(i != 1 & lab_pos == c(1, 1))){
+      grid::grid.newpage()
+      
+      grid::pushViewport(
+        grid::viewport(width = grid::unit(page_width, "in"), 
+                       height = grid::unit(page_height, "in"))
+      )
+      # barcode_layout=grid.layout(numrow, numcol, widths = widths, heights = heights)
+      grid::pushViewport(bc_vp)
+    }
+    
+    if(trunc == TRUE){
       if(nchar(Xsplt) > 15){
         Xsplt <- paste0(substring(Xsplt, seq(1, nchar(Xsplt), 15), seq(15, nchar(Xsplt)+15-1, 15)), collapse = "\n")
       }
     }
-    # print(c("in", x_pos, y_pos))
-    # reset if any of the values are greater than page limits
-    if (x_pos > numcol | y_pos > numrow){
-      grid::grid.newpage()
-      grid::pushViewport(grid::viewport(width = grid::unit(page_width, "in"), height = grid::unit(page_height, "in")))
-      # barcode_layout=grid.layout(numrow, numcol, widths = widths, heights = heights)
-      grid::pushViewport(bc_vp)
-      x_pos = 1
-      y_pos = 1
-    }
-    # print(c(x_pos, y_pos))
-    # print the label onto the viewport
-    grid::pushViewport(grid::viewport(layout.pos.row=y_pos, layout.pos.col=x_pos))
+    grid::pushViewport(grid::viewport(layout.pos.row=lab_pos$y, layout.pos.col=lab_pos$x))
     # grid::grid.rect()
     grid::pushViewport(code_vp)
     grid::grid.draw(label_plots[[i]])
     grid::popViewport()
     grid::pushViewport(label_vp)
+    
     if(type =="linear"){
       grid::grid.rect(gp = grid::gpar(col = NA, fill = "white"))
     }
+    
     grid::grid.text(label = Xsplt, gp = grid::gpar(fontsize = Fsz, lineheight = 0.8))
+    
     grid::popViewport(2)
-    if (Across == "T" | Across == TRUE){
-      x_pos <- x_pos + 1
-      if (x_pos > numcol) {
-        x_pos <- 1
-        y_pos <- y_pos + 1
-      }
-      
-    } else {
-      y_pos <- y_pos + 1
-      if (y_pos > numrow) {
-        y_pos <- 1
-        x_pos <- x_pos + 1
-      }
-    }
-    # print(c("out", x_pos, y_pos))
+    
   }
 
-
-  #end if
-} #end create_PDF()
+} #end custom_create_PDF()
 
 #' @rdname custom_create_PDF
 #' @export
@@ -324,7 +412,12 @@ qrcode_make<-function(Labels, ErrCorr){
     warning("Label is single character or blank. Padding with empty spaces.")
   }
   # Create qrcode
-  Xpng <- grid::rasterGrob(abs(qrcode::qrcode_gen(paste0(Xtxt), ErrorCorrectionLevel = ErrCorr, dataOutput = TRUE, plotQRcode = FALSE, mask = 3) - 1), interpolate = FALSE)
+  Xpng <- grid::rasterGrob(
+    abs(qrcode::qrcode_gen(paste0(Xtxt), 
+                           ErrorCorrectionLevel = ErrCorr, 
+                           dataOutput = TRUE, 
+                           plotQRcode = FALSE, mask = 3) - 1), 
+    interpolate = FALSE)
   return(Xpng)
 }
 
@@ -343,9 +436,11 @@ code_128_make <- function(Labels){
   # ascii to code 128 is just a difference of 32, this line keeps clarity
   code_values <- lab_values - 32
   # 104 is the start value for start code b, hardcoded right now
-  check_sum <- 104 + sum(code_values * 1:length(code_values))
+  check_sum <- 104 + sum(code_values * seq(1,length(code_values)))
   check_character <- check_sum %% 103
-  Binary_code <- sapply(lab_values, function(x, Barcodes) Barcodes$Barcode[x == Barcodes$ASCII], Barcodes = Barcodes)
+  Binary_code <- sapply(lab_values, 
+                        function(x, Barcodes) Barcodes$Barcode[x == Barcodes$ASCII], 
+                        Barcodes = Barcodes)
   ## create quiet zone
   quiet_zone <- paste(c(1:(10)*0),collapse="")
   ## paste together in order: quiet zone, start code binary, binary label, checksum character
@@ -359,7 +454,7 @@ code_128_make <- function(Labels){
                         collapse = "", sep ="")
   ## split binary apart for 
   bar_values <- as.numeric(unlist(strsplit(binary_label, split = "")))
-  barcode_bars <- grid::rasterGrob(t(!as.matrix(bar_values)), width = 1, height = 1, interpolate = F)
+  barcode_bars <- grid::rasterGrob(t(!as.matrix(bar_values)), width = 1, height = 1, interpolate = FALSE)
   return(barcode_bars)
 }
 

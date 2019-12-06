@@ -4,7 +4,8 @@
 \alias{uniqID_maker}
 \title{Generate a list of ID codes}
 \usage{
-uniqID_maker(user = FALSE, string = NULL, level, digits = 3)
+uniqID_maker(user = FALSE, string = NULL, level, digits = 3,
+  ending_string = NULL)
 }
 \arguments{
 \item{user}{logical. Run function using interactive mode (prompts user for 
@@ -20,6 +21,9 @@ adding leading 0s as needed. This will apply to all levels when \code{user=FALSE
 When the numeric value of the label has a greater number of digits than 
 \code{digits}, \code{digits} is automatically increased for the entire level. 
 Default is \code{3}.}
+
+\item{ending_string}{a character string or vector of strings to attach to the label.
+If a vector is used, all combinations of that vector with a unique label will be produced.}
 }
 \value{
 data.frame with text labels in the first column, along with string
@@ -49,6 +53,20 @@ Labels
 level <- c(1:5, 8:10, 999:1000)
 Labels <- uniqID_maker(string = "string", level = level, digits = 4)
 Labels
+
+
+## Using the ending_string to produce labels with unique endings
+## this is different from hierarchical labels with two levels as there 
+## is no numbering, just the text string
+
+
+Labels <- uniqID_maker(string = "string", level = c(1:5), digits = 2, ending_string = "A")
+Labels
+
+Labels <- uniqID_maker(string = "string", level = c(1:5), 
+                       digits = 2, ending_string = c("A", "B"))
+Labels
+
 
 if(interactive()){
 ## function using user prompt does not use any of the other parameters

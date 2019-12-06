@@ -1,0 +1,92 @@
+---
+title: "Use baRcodeR addin"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Use baRcodeR addin}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r}
+knitr::opts_chunk$set(echo = F)
+```
+
+BaRcodeR is an open-source program to facilitate repeatable label generation and management for labelling, tracking and curating data from biological samples.
+
+Flowchart of major functions
+<img src="https://raw.githubusercontent.com/yihanwu/baRcodeR/master/man/figures/Flowchart.png" alt="drawing" width="650"/>
+
+For a quick start, see the [introduction](https://docs.ropensci.org/baRcodeR).
+
+# Cheat Sheet
+
+A 2-page, quick-reference guide is available via [Figshare](https://dx.doi.org/10.6084/m9.figshare.7043309)
+
+If RStudio is not available, see the [introduction](https://docs.ropensci.org/baRcodeR) and `vignette("Using-baRcodeR)"` for command line use. 
+
+## Using the RStudio addin 
+
+The main baRcodeR functions for unique identifiers and QR code generation can be performed interactive via the RStudio addin found on the toolbar. 
+
+### Find the addin
+
+Make sure to restart RStudio after installing. Then the addin should appear in the toolbar. 
+
+Click on the add-in, and a popup window will appear. 
+
+```{r, fig.cap = "Screenshot of RStudio addins bar"}
+knitr::include_graphics("add-in-screenshot.png")
+```
+
+Note the 3 tabs along the bottom, corresponding to the three main baRcodeR commands: `uniqID_maker`, `uniqID_hier_maker` and `create_PDF`.
+
+
+```{r, fig.cap = "Screenshot of the simple ID Code tab"}
+knitr::include_graphics("tab-1-screenshot.png")
+```
+
+### Generate simple ID codes
+
+The first tab generates basic ID codes with user input as seen below:
+
+```{r, fig.cap = "Active simple ID code tab"}
+knitr::include_graphics("tab-1-screenshot-2.png")
+```
+
+
+As you fill in the fields, a preview of the ID codes will appear on the right-hand side along with reproducible code, which can be copied for archival purposes. Clicking 'Create Label.csv' will create a CSV file called 'Label_YYYY-MM-DD.csv', which contains a data frame with the full unique ID strings as the first column, the user-defined prefix string in the second column, and the unique ID number in the third column. This file is useful for archiving ID codes and as a starting point for data entry. For example, it can be opened in a spreadsheet program to add data measurement columns. It is also the input for creating printable, QR-coded labels with `create_PDF`.
+
+```{r, fig.cap = "Screenshot of the hierarchical ID code tab"}
+knitr::include_graphics("tab-2-screenshot.png")
+```
+
+
+### Generate Hierarchical ID codes
+
+You can switch from the simple ID code generation tab to the hierarchical ID code generation or QR code creation tabs at the bottom.
+
+Hierarchical ID codes have a nested structure (e.g. X subsamples from Y individuals at Z time points), the information for each level is saved under the "Hierarchy" section. The "Add level" button is used to add more levels to the hierarchy, and the "Remove level" button will remove the most recently added level. The data frame output will contain ID codes in the first column, and a separate column for each level of the hierarchy, with the user-defined string as the header; as shown under 'Preview'. As with the simple ID code tab, the output of Hierarchical ID codes is a CSV file "Labels_YYYY-MM-DD.csv", saved in the working directory. This file is useful for archiving ID codes and as a starting point for data entry. For example, it can be opened in a spreadsheet program to add data measurement columns. It is also the input for creating printable, QR-coded labels with `create_PDF`.
+
+```{r, fig.cap = "Sceenshot of PDF creation tab"}
+knitr::include_graphics("tab-3-screenshot.png")
+```
+
+### Create the PDF for sticker printing
+
+The Barcode Creation tab contains all the advanced options for page layout. The default options fit a specific format: ULINE 1.75" * 0.5" WEATHER RESISTANT LABEL for laser printer; item # S-19297 (uline.ca). A text file containing ID codes is imported by clicking the "Browse" button and selecting the CSV text file in the file browser. The file is be previewed by clicking "Import File". 
+
+After importing a CSV file, the preview shows part of the expected output PDF file based on font size and other layout options. The first column is highlighted by default and defines the column to use for the labels. Clicking on a different column will set it as the ID code column, as shown in the preview.
+
+```{r, fig.cap = "Screenshot of Column Selection"}
+knitr::include_graphics("tab-3-screenshot-2.png")
+```
+
+
+Clicking "Make PDF" will generate a printable PDF of all barcodes provided. This can take several minutes for >100 barcodes, depending on computer speed. The text "Done" will appear upon completion of the PDF file.
+
+> NOTE: When printing from pdf, ensure that 'anti-aliasing' or 'smoothing' options are turned OFF, and that you are not using 'fit to page' or similar options that will re-scale the output.
+
+```{r}
+sessionInfo()
+```
+

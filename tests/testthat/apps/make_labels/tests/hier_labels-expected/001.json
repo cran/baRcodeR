@@ -1,0 +1,59 @@
+{
+  "input": {
+    "across": "TRUE",
+    "addin_tabs": "Hierarchical ID Code Generation",
+    "cancel": 0,
+    "digits": 3,
+    "done": 0,
+    "ecol": 0,
+    "end_number": null,
+    "erow": 0,
+    "err_corr": "L",
+    "filename": "LabelsOut",
+    "font_size": 12,
+    "header": true,
+    "height_margin": 0.5,
+    "hier_digits": 2,
+    "hier_end_number": null,
+    "hier_label_make": 0,
+    "hier_prefix": "",
+    "hier_start_number": null,
+    "insertBtn": 1,
+    "label_check": 0,
+    "label_height": null,
+    "label_width": null,
+    "labels": null,
+    "make": 0,
+    "make_pdf": 0,
+    "numcol": 4,
+    "numrow": 20,
+    "page_height": 11,
+    "page_width": 8.5,
+    "prefix": "",
+    "removeBtn": 0,
+    "start_number": null,
+    "trunc": false,
+    "type": "matrix",
+    "width_margin": 0.25,
+    "x_space": 0,
+    "y_space": 0.5
+  },
+  "output": {
+    "hier_code": "uniqID_hier_maker(user = FALSE, hierarchy = list(c(Prefix=\"a\",start=\"1\",end=\"2\")), end = NULL, digits = 2)",
+    "hier_label_df": [
+      "Please add a level",
+      "NULL",
+      "c(\"shiny.silent.error\", \"validation\")"
+    ],
+    "label_code": "[1] uniqID_maker(user = FALSE, string = '', level = c(NA,NA), digits = 3)",
+    "label_df": [
+      "Please enter a prefix\nPlease enter a starting value\nPlease enter an ending value",
+      "NULL",
+      "c(\"shiny.silent.error\", \"validation\")"
+    ],
+    "list_check": "  Prefix start end\n1      a     1   2"
+  },
+  "export": {
+
+  }
+}

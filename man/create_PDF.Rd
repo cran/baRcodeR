@@ -5,7 +5,7 @@
 \title{Make barcodes and print labels}
 \usage{
 create_PDF(user = FALSE, Labels = NULL, name = "LabelsOut",
-  type = "matrix", ErrCorr = "H", Fsz = 2.5, ...)
+  type = "matrix", ErrCorr = "H", Fsz = 12, ...)
 }
 \arguments{
 \item{user}{logical. Run function using interactive mode (prompts user for
@@ -15,14 +15,16 @@ parameter values) Default is \code{FALSE}}
 ID codes) with either UTF-8 or ASCII encoding.}
 
 \item{name}{character. Name of the PDF output file. Default is
-\code{"LabelsOut"}.}
+\code{"LabelsOut"}. A file named \code{name.pdf} will be saved to the
+working directory by default. Use \code{"dirname/name"} to produce a file
+called \code{name.pdf} in the \code{dirname} directory.}
 
 \item{type}{character. Choice of \code{"linear"} code 128 or \code{"matrix"}
 QR code labels. Default is \code{"matrix"}.}
 
 \item{ErrCorr}{error correction value for matrix labels only. Level of damage
 from low to high: \code{"L"}, \code{"M"}, \code{"Q"}, \code{"H"}. Default
-is \code{"H"}.}
+is \code{"H"}. See details for explanation of values.}
 
 \item{Fsz}{numerical. Sets font size in points. Longer ID codes may be shrunk
 to fit if truncation is not used for matrix labels. Default font size is
@@ -44,7 +46,7 @@ See details of \code{\link{custom_create_PDF}} on how to format text labels
 if needed.
 }
 \details{
-#' The default PDF setup is for ULINE 1.75" * 0.5" WEATHER RESISTANT LABEL for laser
+The default PDF setup is for ULINE 1.75" * 0.5" WEATHER RESISTANT LABEL for laser
 printer; item # S-19297 (uline.ca). The page format can be modified using
 the \code{...} (advanced arguments) for other label types.
 }
@@ -56,10 +58,12 @@ example_vector <- as.data.frame(c("ao1", "a02", "a03"))
 ## run with default options
 ## pdf file will be "example.pdf" saved into a temp directory
 
-create_PDF(Labels = example_vector, name = file.path(tempdir(), "example"))
+temp_file <- tempfile()
+
+create_PDF(Labels = example_vector, name = temp_file)
 
 ## view example output from temp folder
-system(paste0('open "', file.path(tempdir(), "example"), ".pdf"))
+system2("open", paste0(temp_file, ".pdf"))
 }
 
 ## run interactively. Overrides default pdf options
@@ -67,20 +71,20 @@ if(interactive()){
     create_PDF(user = TRUE, Labels = example_vector)
 }
 
-\donttest{
+\dontrun{
 ## run using a data frame, automatically choosing the "label" column
 example_df <- data.frame("level1" = c("a1", "a2"), "label" = c("a1-b1",
 "a1-b2"), "level2" = c("b1", "b1"))
 create_PDF(user = FALSE, Labels = example_df, name = file.path(tempdir(), "example_2"))
 }
 
-\donttest{
+\dontrun{
 ## run using an unnamed data frame
 example_df <- data.frame(c("a1", "a2"), c("a1-b1", "a1-b2"), c("b1", "b1"))
 ## specify column from data frame
 create_PDF(user = FALSE, Labels = example_df[,2], name = file.path(tempdir(), "example_3"))
 }
-\donttest{
+\dontrun{
 ## create linear (code128) label rather than matrix (2D/QR) labels
 example_df <- data.frame(c("a1", "a2"), c("a1-b1", "a1-b2"), c("b1", "b1"))
 ## specify column from data frame

@@ -1,8 +1,19 @@
+# baRcodeR 0.1.4
+
+Bugs and Improvements:
+
+- tests have been added for user prompts and the RStudio addin with shinytest
+- vignettes describing how to use the add-in and the command line are now organized separately from the restructured README
+- `custom_create_PDF()` page generation should now be faster (helpful when making sheets for hundreds of labels)
+- the command prompts have been restructured for a more menu-like selection for yes/no questions.
+- other minor changes in addition to the major ones outlined above as suggested by reviews at rOpenSci documented [here](https://github.com/ropensci/software-review/issues/338)
+- the baRcodeR package is now a part of [rOpenSci](https://ropensci.org/) and the documentation is online (here)[https://docs.ropensci.org/baRcodeR/]
+
 # baRcodeR 0.1.3
 
 Bugs and Improvements:
 
-- major bug fix for linear barcodes that occassionally created unscannable barcodes.
+- major bug fix for linear barcodes that occasionally created unscannable barcodes.
 - added documentation on how to create alternative formatting of labels (e.g. spaces, line breaks)
 - added padding for labels which were single character or blank
 - 2-page cheatsheet now available as addin 

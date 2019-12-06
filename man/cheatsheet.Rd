@@ -6,12 +6,14 @@
 \usage{
 cheatsheet()
 }
+\value{
+Opens webpage of PDF
+}
 \description{
 This addin links to a downloadable PDF version of the baRcodeR cheatsheet.
 }
 \examples{
 if(interactive()){
-library(baRcodeR)
-cheatsheet()
+baRcodeR::cheatsheet()
 }
 }
