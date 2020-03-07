@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = F)
 BaRcodeR is an open-source program to facilitate repeatable label generation and management for labelling, tracking and curating data from biological samples.
 
 Flowchart of major functions
-<img src="https://raw.githubusercontent.com/yihanwu/baRcodeR/master/man/figures/Flowchart.png" alt="drawing" width="650"/>
+<img src="https://raw.githubusercontent.com/ropensci/baRcodeR/master/man/figures/Flowchart.png" alt="drawing" width="650"/>
 
 For a quick start, see the [introduction](https://docs.ropensci.org/baRcodeR).
 

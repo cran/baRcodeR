@@ -118,7 +118,7 @@ uniqID_hier_maker <- function(user = FALSE, hierarchy, end = NULL, digits = 2){
     barcodes <- Labels
   } # end hierarchy making loop
   # makes columns out of hierarchy levels
-  label_df <- cbind(barcodes, data.frame(t(sapply(strsplit(barcodes, "-"),c))))
+  label_df <- cbind(barcodes, data.frame(t(sapply(strsplit(barcodes, "-"),c)), stringsAsFactors = FALSE))
   df_names <- sapply(hierarchy, function(x) x[1])
   names(label_df) <- c("label", df_names)
   # dont forget to add the string at the end

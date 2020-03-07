@@ -53,13 +53,13 @@ test_that("interactive for sequential works properly", {
     uniqID_maker(user = T), 
     data.frame(label = c("example001", "example002"), 
                ind_string = c("example", "example"), 
-               ind_number = c("001", "002")))
+               ind_number = c("001", "002"), stringsAsFactors = FALSE))
   
   expect_identical(
     uniqID_maker(user = T), 
     data.frame(label = c("example1", "example2"), 
                ind_string = c("example", "example"), 
-               ind_number = c("1", "2")))
+               ind_number = c("1", "2"), stringsAsFactors = FALSE))
   
   expect_error(
     uniqID_maker(user = T),
@@ -84,7 +84,7 @@ test_that("hierarchical user prompts work correctly", {
                  "b", 1, 2), collapse = "\n") 
   write(ans, g)
   
-  example_hier_df <- data.frame(label = c("a04-b01", "a04-b02", "a05-b01", "a05-b02"), a = c("a04", "a04", "a05", "a05"), b = c("b01", "b02", "b01", "b02"))
+  example_hier_df <- data.frame(label = c("a04-b01", "a04-b02", "a05-b01", "a05-b02"), a = c("a04", "a04", "a05", "a05"), b = c("b01", "b02", "b01", "b02"), stringsAsFactors = FALSE)
   example_hier_df$label <- as.character(example_hier_df$label)
   expect_equal(
     uniqID_hier_maker(user = T),

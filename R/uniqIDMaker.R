@@ -94,13 +94,13 @@ uniqID_maker <- function(user = FALSE, string = NULL, level, digits = 3, ending_
     ind_number <- sprintf(paste0("%0", digits, "d"), rep(level))
     suffix_strings <- expand.grid(label, ending_string)$Var2
     label <- paste(label, suffix_strings, sep = "-")
-    label_df <- data.frame(label, ind_string, ind_number, end_string = suffix_strings)
+    label_df <- data.frame(label, ind_string, ind_number, end_string = as.character(suffix_strings), stringsAsFactors = FALSE)
   } else {
     line <- paste0(string, "%0", digits, "d")
     label <- sprintf(line, rep(level))
     ind_string <- rep(string, length(rep(level)))
     ind_number <- sprintf(paste0("%0", digits, "d"), rep(level))
-    label_df <- data.frame(label, ind_string, ind_number)
+    label_df <- data.frame(label, ind_string, ind_number, stringsAsFactors = FALSE)
   }
   
   

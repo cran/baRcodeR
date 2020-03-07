@@ -1,3 +1,11 @@
+# baRcodeR 0.1.5
+
+Bugs:
+
+- fixed errors in tests due to r-devel switching to using stringsAsFactor = FALSE as default
+- fixed broken link in readme
+
+
 # baRcodeR 0.1.4
 
 Bugs and Improvements:

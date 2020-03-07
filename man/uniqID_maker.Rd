@@ -4,8 +4,13 @@
 \alias{uniqID_maker}
 \title{Generate a list of ID codes}
 \usage{
-uniqID_maker(user = FALSE, string = NULL, level, digits = 3,
-  ending_string = NULL)
+uniqID_maker(
+  user = FALSE,
+  string = NULL,
+  level,
+  digits = 3,
+  ending_string = NULL
+)
 }
 \arguments{
 \item{user}{logical. Run function using interactive mode (prompts user for 
