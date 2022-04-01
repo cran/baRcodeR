@@ -16,13 +16,13 @@ BaRcodeR is an open-source program to facilitate repeatable label generation and
 Flowchart of major functions
 <img src="https://raw.githubusercontent.com/ropensci/baRcodeR/master/man/figures/Flowchart.png" alt="drawing" width="650"/>
 
-For a quick start, see the [introduction](https://docs.ropensci.org/baRcodeR).
+For a quick start, see the [introduction](https://docs.ropensci.org/baRcodeR/).
 
 # Cheat Sheet
 
 A 2-page, quick-reference guide is available via [Figshare](https://dx.doi.org/10.6084/m9.figshare.7043309)
 
-If RStudio is not available, see the [introduction](https://docs.ropensci.org/baRcodeR) and `vignette("Using-baRcodeR)"` for command line use. 
+If RStudio is not available, see the [introduction](https://docs.ropensci.org/baRcodeR/) and `vignette("Using-baRcodeR)"` for command line use. 
 
 ## Using the RStudio addin 
 

@@ -2,6 +2,7 @@
 
 export(cheatsheet)
 export(code_128_make)
+export(code_128_make2)
 export(create_PDF)
 export(custom_create_PDF)
 export(make_labels)

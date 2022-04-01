@@ -1,3 +1,19 @@
+# baRcodeR 0.1.7 
+
+Thanks to rwalke for adding "Linear2" to the option list (Linear, Matrix). This will produce Code 128 extended linear barcodes, allowing for particular 1-D barcode patterns that are distinct from "Linear"
+
+Thanks to Theirry() for pointing out that we need to change qrcode::qr_code() from (deprecated) qrcode_gen
+
+
+# baRcodeR 0.1.6
+
+At the request of a COVID-2019 research group, we have added an option to allow non-encoded text to appear with linear & 2D barcodes. These have been added to custom_create_PDF():
+
+* alt_text -- adds human-readable text that is NOT encoded in the digital barcode
+* denote -- characters used to denote non-encoded text
+
+These are considered advanced features that should be used cautiously, and therefore they are not made available through the Addins GUI. 
+
 # baRcodeR 0.1.5
 
 Bugs:

@@ -30,6 +30,6 @@ test_that("PDF input errors", {
   expect_error(custom_create_PDF(Labels = c(1, 2), y_space = 251), "ERROR: y_space value out of bounds.")
   expect_error(custom_create_PDF(Labels = c(1, 2), y_space = "test"), "One or more numerical parameters are not numeric")
   expect_error(custom_create_PDF(Labels = data.frame(label = c("example09", "example10"), ind_string = c("example", "example"), ind_number = c("09", "10")), type="noformat"),
-               "Barcode type must be linear or matrix")
+               "Barcode type must be linear, linear2 or matrix")
 
 })

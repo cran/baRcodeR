@@ -10,12 +10,14 @@
 [![Travis build
 status](https://travis-ci.org/ropensci/baRcodeR.svg?branch=master)](https://travis-ci.org/ropensci/baRcodeR)
 [![Codecov test
-coverage](https://codecov.io/gh/ropensci/baRcodeR/branch/master/graph/badge.svg)](https://codecov.io/gh/ropensci/baRcodeR?branch=master)
+coverage](https://codecov.io/gh/ropensci/baRcodeR/branch/master/graph/badge.svg)](https://app.codecov.io/gh/ropensci/baRcodeR?branch=master)
 [![Project Status: Active â€“ The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![CRAN
 checks](https://cranchecks.info/badges/worst/baRcodeR)](https://cran.r-project.org/web/checks/check_results_baRcodeR.html)
+[![rOpenSci
+peer-review](https://badges.ropensci.org/338_status.svg)](https://github.com/ropensci/software-review/issues/338)
 <!-- badges: end -->
 
 baRcodeR generates labels for more repeatable workflows with biological
@@ -48,10 +50,6 @@ library(baRcodeR)
 
     ## Loading required package: qrcode
 
-    ## Registered S3 method overwritten by 'R.oo':
-    ##   method        from       
-    ##   throw.default R.methodsS3
-
 ``` r
 example_labels <- uniqID_maker(user = FALSE, string = "Example", level = 1:80)
 head(example_labels)
@@ -75,7 +73,7 @@ create_PDF(Labels = example_labels, name = pdf_file_name)
 
 ![](man/figures/example.png)<!-- -->
 
-Th particular layout above defaults to ULINE 1.75" \* 0.5" labels but
+Th particular layout above defaults to ULINE 1.75” \* 0.5” labels but
 other layouts can be specified through parameters in the
 `custom_create_PDF` function.
 
@@ -86,17 +84,17 @@ printable 2D (QR) barcodes, with the aim of improving repeatability of
 labelling, tracking and curating data from biological samples.
 Specifically, users can:
 
-  - generate simple ID codes (Ex001, Ex002, Ex003 …),
-  - generate hierarchical (i.e. nested) ID codes (A01-B01, A01-B02,
+-   generate simple ID codes (Ex001, Ex002, Ex003 …),
+-   generate hierarchical (i.e. nested) ID codes (A01-B01, A01-B02,
     A02-B01, A02-B02, A03-B01 …),
-  - generate printable PDF files of paired ID codes and QR barcodes with
-    default spacing for ULINE 1.75" \* 0.5" WEATHER RESISTANT LABEL for
-    laser printer; item \# S-19297 (uline.ca)
-  - customize the PDF layout for any type of printable format (e.g,
+-   generate printable PDF files of paired ID codes and QR barcodes with
+    default spacing for ULINE 1.75” \* 0.5” WEATHER RESISTANT LABEL for
+    laser printer; item # S-19297 (uline.ca)
+-   customize the PDF layout for any type of printable format (e.g,
     vinyl stickers, waterproof paper)
-  - generate reproducible code for archival purposes (e.g. in
+-   generate reproducible code for archival purposes (e.g. in
     publications or online repositories)
-  - create CSV files to link unique IDs and sampling hierarchy with
+-   create CSV files to link unique IDs and sampling hierarchy with
     downstream data collection workflows. For example, the PyTrackDat
     pipeline can be used to set up a web-based data collection platform:
     <https://github.com/pytrackdat/pytrackdat>
@@ -114,8 +112,8 @@ used as input to generate barcodes. Otherwise, the first column in the
 data frame will be used.
 
 > NOTE: When printing from pdf, ensure that ‘anti-aliasing’ or
-> ‘smoothing’ options are turned OFF, and that you are not using ‘fit
-> to page’ or similar options that will re-scale the output.
+> ‘smoothing’ options are turned OFF, and that you are not using ‘fit to
+> page’ or similar options that will re-scale the output.
 
 ![Flowchart of major functions](man/figures/Flowchart.png)
 
@@ -155,9 +153,9 @@ example, and the `sessionInfo()`.
 sessionInfo()
 ```
 
-    ## R version 3.6.1 (2019-07-05)
+    ## R version 4.1.3 (2022-03-10)
     ## Platform: x86_64-w64-mingw32/x64 (64-bit)
-    ## Running under: Windows 10 x64 (build 17763)
+    ## Running under: Windows 10 x64 (build 22000)
     ## 
     ## Matrix products: default
     ## 
@@ -170,25 +168,26 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] baRcodeR_0.1.4 qrcode_0.1.1  
+    ## [1] baRcodeR_0.1.7 qrcode_0.1.4  
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_1.0.3        png_0.1-7         digest_0.6.23     R.methodsS3_1.7.1
-    ##  [5] magrittr_1.5      evaluate_0.14     rlang_0.4.1       stringi_1.4.3    
-    ##  [9] rstudioapi_0.10   R.oo_1.22.0       R.utils_2.9.0     rmarkdown_1.17   
-    ## [13] tools_3.6.1       stringr_1.4.0     xfun_0.11         yaml_2.2.0       
-    ## [17] compiler_3.6.1    htmltools_0.4.0   knitr_1.26
+    ##  [1] png_0.1-7         assertthat_0.2.1  digest_0.6.29     R.methodsS3_1.8.1
+    ##  [5] magrittr_2.0.2    evaluate_0.15     highr_0.9         rlang_1.0.2      
+    ##  [9] stringi_1.7.6     cli_3.2.0         rstudioapi_0.13   R.oo_1.24.0      
+    ## [13] R.utils_2.11.0    rmarkdown_2.13    tools_4.1.3       stringr_1.4.0    
+    ## [17] xfun_0.30         yaml_2.3.5        fastmap_1.1.0     compiler_4.1.3   
+    ## [21] htmltools_0.5.2   knitr_1.38
 
 # See also:
 
-  - [zintr](https://github.com/carlganz/zintr)is an R interface to the C
+-   [zintr](https://github.com/carlganz/zintr)is an R interface to the C
     zint library. Use zintr if you want to create single barcode images.
     zintr does not include functions for (i) automating the creation of
     biologically-relevant, unique ID codes or (ii) customizable layouts
     for printing multiple barcodes.
 
-  - [zint](http://zint.org.uk/) is a C library that generates a variety
+-   [zint](https://zint.org.uk/) is a C library that generates a variety
     of different barcodes. Just like zintr, zint produces single barcode
     images.
 
-[![ropensci\_footer](https://ropensci.org/public_images/ropensci_footer.png)](https://ropensci.org)
+[![ropensci_footer](https://ropensci.org/public_images/ropensci_footer.png)](https://ropensci.org)
